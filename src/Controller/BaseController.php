@@ -24,31 +24,48 @@ abstract class BaseController extends AbstractController
         $this->translator = $translator;
     }
     
+    protected function buildSuccessResult(string $type, $object)
+    {
+        return [
+            "process" => true, 
+            "status" => true, 
+            "message" => $this->translator->trans('messages.'.$type.'.success'), 
+            "errors" => null
+        ];
+    }
+    
+    protected function buildErrorResult(string $type, string $message)
+    {
+        return [
+            "process" => true, 
+            "status" => false, 
+            "message" => $this->translator->trans('messages.'.$type.'.error'), 
+            "errors" => $message
+        ];
+    }
+    
     protected function processFormAjax(Request $request, FormInterface $form):array
     {
         $form->handleRequest($request);
         
-        if ($form->isSubmitted()) 
-        {
+        if ($form->isSubmitted()) {
             $type = ($form->getData() && !is_array($form->getData()) && $form->getData()->getId()) ? "update": "add";
-            if($form->isValid()) 
-            {
+            if($form->isValid()) {
                 $manager = $this->getDoctrine()->getManager();
-                try 
-                {
+                try {
                     
                     $object = $this->saveObject($form->getData(), $manager);
                     
-                    return ["process" => true, "status" => true, "message" => $this->translator->trans('messages.'.$type.'.success'), "errors" => null];
-                } catch (\Exception $ex) 
-                {
-                    return ["process" => true, "status" => false, "message" => $this->translator->trans('messages.'.$type.'.error'), "errors" => $ex->getMessage()];
+                    return $this->buildSuccessResult($type, $object);
+                } catch (\Exception $ex) {
+                    
+                    return $this->buildErrorResult($type, $ex->getMessage());
                 }
-            }else
-            {
+            }else {
+                
                 $errors = $this->getErrorsFromForm($form);
 				
-                return ["process" => true, "status" => false, "message" => $this->translator->trans('messages.'.$type.'.error'), "errors" => implode(", ", $errors)];
+                return $this->buildErrorResult($type, implode(", ", $errors));
             }
         }
         
@@ -70,24 +87,19 @@ abstract class BaseController extends AbstractController
     {
         $form->handleRequest($request);
         
-        if ($form->isSubmitted())
-        {
-            if($form->isValid())
-            {
+        if ($form->isSubmitted()) {
+            if($form->isValid()) {
                 $manager = $this->getDoctrine()->getManager();
-                try
-                {
+                try {
                     $object = $this->saveObject($form->getData(), $manager);
                     
                     $this->addFlash("info", $this->translator->trans('successfull_save'));
                     
                     return $object;
-                } catch (\Exception $ex) 
-                {
+                } catch (\Exception $ex) {
                     $this->addFlash("error", 'error : ' . $ex->getMessage());
                 }
-            }else
-            {
+            }else {
                 $this->addFlash("error", implode(', ', $this->getErrorsFromForm($form)));
             }
         }
@@ -98,48 +110,46 @@ abstract class BaseController extends AbstractController
     protected function getErrorsFromForm(FormInterface $form):array
     {
         $errors = array();
-        foreach ($form->getErrors() as $error) 
-        {
+        foreach ($form->getErrors() as $error) {
             $errors[] = $error->getMessage();
         }
         
-        foreach ($form->all() as $childForm) 
-        {
-            if ($childForm instanceof FormInterface) 
-            {
-                if ($childErrors = $this->getErrorsFromForm($childForm)) 
-                {
-                    $errors[$childForm->getName()] = sprintf('%s: %s', $this->translator->trans($childForm->getName()), implode(", ", $childErrors));
-                }
+        foreach ($form->all() as $childForm) {
+            if (!$childForm instanceof FormInterface) {
+                continue;
             }
+            
+            $childErrors = $this->getErrorsFromForm($childForm);
+            if (!$childErrors) {
+                continue;
+            } 
+            
+            $errors[$childForm->getName()] = sprintf('%s: %s', $this->translator->trans($childForm->getName()), implode(", ", $childErrors));
         }
+        
         return $errors;
     }
     
     protected function doDelete(Request $request, $object, string $tokenName)
     {
-        if ($this->isCsrfTokenValid($tokenName, $request->request->get('_token'))) 
-        {
+        if ($this->isCsrfTokenValid($tokenName, $request->request->get('_token'))) {
             $manager = $this->getDoctrine()->getManager();
             try{
                 $manager->transactional(function (EntityManagerInterface $em) use ($object) {
                     $em->remove($object);
                 });
                 
-                if($object->getId())
-                {
+                if($object->getId()) {
                     $qb = $em->createQueryBuilder('t')->delete(get_class($object), 'obj')->where('obj.id = :id')
                         ->setParameter('id', $object->getId());
                     $qb->getQuery()->execute();
                 }
                 
                 $this->addFlash('info', $this->translator->trans('successfull_delete'));
-            } catch (\Exception $ex) 
-            {
+            } catch (\Exception $ex) {
                 $this->addFlash('error', 'error :' . $ex->getMessage());
             }
-        } else 
-        {
+        } else {
             $this->addFlash('error', $this->translator->trans('csrf_token_detected'));
         }
     }
