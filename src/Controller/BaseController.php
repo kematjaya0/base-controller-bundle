@@ -48,36 +48,35 @@ abstract class BaseController extends AbstractController
     {
         $form->handleRequest($request);
         
-        if ($form->isSubmitted()) {
-            $type = ($form->getData() && !is_array($form->getData()) && $form->getData()->getId()) ? "update": "add";
-            if($form->isValid()) {
-                $manager = $this->getDoctrine()->getManager();
-                try {
-                    
-                    $object = $this->saveObject($form->getData(), $manager);
-                    
-                    return $this->buildSuccessResult($type, $object);
-                } catch (\Exception $ex) {
-                    
-                    return $this->buildErrorResult($type, $ex->getMessage());
-                }
-            }else {
-                
-                $errors = $this->getErrorsFromForm($form);
-				
-                return $this->buildErrorResult($type, implode(", ", $errors));
-            }
+        if (!$form->isSubmitted()) {
+            
+            return ["process" => false];
         }
         
-        return ["process" => false];
+        $type = ($form->getData() && !is_array($form->getData()) && $form->getData()->getId()) ? "update": "add";
+        if (!$form->isValid()) {
+            
+            $errors = $this->getErrorsFromForm($form);
+
+            return $this->buildErrorResult($type, implode(", ", $errors));
+        }
+        
+        $manager = $this->getDoctrine()->getManager();
+        try {
+
+            $object = $this->saveObject($form->getData(), $manager);
+
+            return $this->buildSuccessResult($type, $object);
+        } catch (\Exception $ex) {
+
+            return $this->buildErrorResult($type, $ex->getMessage());
+        }
     }
     
     protected function saveObject($object, EntityManagerInterface $manager)
     {
         $manager->transactional(function (EntityManagerInterface $em) use ($object) {
-            
             $em->persist($object);
-            
         });
         
         return $object;
@@ -86,22 +85,26 @@ abstract class BaseController extends AbstractController
     protected function processForm(Request $request, FormInterface $form, $func = null)
     {
         $form->handleRequest($request);
+        if (!$form->isSubmitted()) {
+            
+            return false;
+        }
         
-        if ($form->isSubmitted()) {
-            if($form->isValid()) {
-                $manager = $this->getDoctrine()->getManager();
-                try {
-                    $object = $this->saveObject($form->getData(), $manager);
-                    
-                    $this->addFlash("info", $this->translator->trans('successfull_save'));
-                    
-                    return $object;
-                } catch (\Exception $ex) {
-                    $this->addFlash("error", 'error : ' . $ex->getMessage());
-                }
-            }else {
-                $this->addFlash("error", implode(', ', $this->getErrorsFromForm($form)));
-            }
+        if (!$form->isValid()) {
+            $this->addFlash("error", implode(', ', $this->getErrorsFromForm($form)));
+            
+            return false;
+        }
+        
+        $manager = $this->getDoctrine()->getManager();
+        try {
+            $object = $this->saveObject($form->getData(), $manager);
+
+            $this->addFlash("info", $this->translator->trans('successfull_save'));
+
+            return $object;
+        } catch (\Exception $ex) {
+            $this->addFlash("error", 'error : ' . $ex->getMessage());
         }
         
         return false;
@@ -130,27 +133,28 @@ abstract class BaseController extends AbstractController
         return $errors;
     }
     
-    protected function doDelete(Request $request, $object, string $tokenName)
+    protected function doDelete(Request $request, $object, string $tokenName):void
     {
-        if ($this->isCsrfTokenValid($tokenName, $request->request->get('_token'))) {
-            $manager = $this->getDoctrine()->getManager();
-            try{
-                $manager->transactional(function (EntityManagerInterface $em) use ($object) {
-                    $em->remove($object);
-                });
-                
-                if($object->getId()) {
-                    $qb = $em->createQueryBuilder('t')->delete(get_class($object), 'obj')->where('obj.id = :id')
-                        ->setParameter('id', $object->getId());
-                    $qb->getQuery()->execute();
-                }
-                
-                $this->addFlash('info', $this->translator->trans('successfull_delete'));
-            } catch (\Exception $ex) {
-                $this->addFlash('error', 'error :' . $ex->getMessage());
-            }
-        } else {
+        if (!$this->isCsrfTokenValid($tokenName, $request->request->get('_token'))) {
             $this->addFlash('error', $this->translator->trans('csrf_token_detected'));
+            return;
+        }
+        
+        $manager = $this->getDoctrine()->getManager();
+        try{
+            $manager->transactional(function (EntityManagerInterface $em) use ($object) {
+                $em->remove($object);
+            });
+
+            if($object->getId()) {
+                $qb = $manager->createQueryBuilder('t')->delete(get_class($object), 'obj')->where('obj.id = :id')
+                    ->setParameter('id', $object->getId());
+                $qb->getQuery()->execute();
+            }
+
+            $this->addFlash('info', $this->translator->trans('successfull_delete'));
+        } catch (\Exception $ex) {
+            $this->addFlash('error', 'error :' . $ex->getMessage());
         }
     }
 }
