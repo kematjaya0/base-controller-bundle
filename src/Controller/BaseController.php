@@ -142,19 +142,25 @@ abstract class BaseController extends AbstractController
         
         $manager = $this->getDoctrine()->getManager();
         try{
-            $manager->transactional(function (EntityManagerInterface $em) use ($object) {
-                $em->remove($object);
-            });
-
-            if($object->getId()) {
-                $qb = $manager->createQueryBuilder('t')->delete(get_class($object), 'obj')->where('obj.id = :id')
-                    ->setParameter('id', $object->getId());
-                $qb->getQuery()->execute();
-            }
-
+            
+            $this->removeObject($object, $manager);
+            
             $this->addFlash('info', $this->translator->trans('successfull_delete'));
         } catch (\Exception $ex) {
             $this->addFlash('error', 'error :' . $ex->getMessage());
+        }
+    }
+    
+    protected function removeObject($object, EntityManagerInterface $manager):void
+    {
+        $manager->transactional(function (EntityManagerInterface $em) use ($object) {
+            $em->remove($object);
+        });
+
+        if($object->getId()) {
+            $qb = $manager->createQueryBuilder('t')->delete(get_class($object), 'obj')->where('obj.id = :id')
+                ->setParameter('id', $object->getId());
+            $qb->getQuery()->execute();
         }
     }
 }
