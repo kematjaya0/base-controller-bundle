@@ -1,0 +1,109 @@
+<div class="modal-content" id="modal-dialog">
+    
+    {% block form_start %}{% endblock %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{% block title %}{% endblock %}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="message" class="hidden alert alert-danger"></div>
+                
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+        
+        {% block actions %}{% endblock %}
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i> {{ 'close'|trans }}</button>
+    </div>
+    
+    {% block form_end %}{% endblock %}
+
+<script src="{{asset('bundles/adminlte/js/jquery.form.js')}}" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+        var submitBtn = $("#ajaxForm").closest('form').find(':submit');
+        $("#ajaxForm").ajaxForm({
+            url: $(this).attr("action"), 
+            type: 'post',
+            dataType:  'json',
+            beforeSubmit: function () {
+                $("#message").removeClass("hidden alert-danger alert-info");
+                $("#message").html('<p>&nbsp;&nbsp; <img src="{{ asset('bundles/adminlte/images/loading.gif') }}" style="width: 20px"/> {{'send_data'|trans}} ... </p>');
+                $("#message").addClass("alert alert-warning");
+                submitBtn.addClass("disabled");
+                submitBtn.attr("type", "button");
+                $("#additional_actions").html("");
+                submitBtn.html('<span class="fa fa-send"></span> {{'send_data'|trans}}');
+            },
+            success: function (e) {
+                if(false === e.status) {
+                    $("#message").html("<p>{{'error'|trans}}: " + e.errors + "</p>");
+                    $("#message").removeClass("hidden");
+                    submitBtn.removeClass("disabled");
+                    submitBtn.attr("type", "submit");
+                    submitBtn.html('<span class="fa fa-save"></span> {{'save'|trans}}');
+                } else {
+                    $("#message").html("<p>{{'successfull'|trans}}</p>");
+                    $("#message").removeClass("hidden");
+                    $("#message").removeClass("alert-danger alert-warning");
+                    $("#message").addClass("alert-info");
+                    if(e.redirectURL) {
+                        if(e.redirectURL.length >1)
+                        {
+                            for (i = 0; i < e.redirectURL.length; i++) {
+                                let uri = e.redirectURL[i];
+                                let icon = (uri.icon) ? uri.icon : '<i class="fa fa-list"></i>';
+                                $("#additional_actions").append('<a href="'+uri.url+'" target="_blank" class="btn btn-primary">'+icon+' '+uri.title+'</a>');
+                            }
+
+                            submitBtn.addClass("hidden");
+                            submitBtn.attr("type", "submit");
+                            submitBtn.html('<span class="fa fa-save"></span> {{'save'|trans}}');
+                            $("#btn-modal-close").attr("onclick", "return location.reload();");
+                        } else
+                        {
+                            for (i = 0; i < e.redirectURL.length; i++) {
+                                let uri = e.redirectURL[i];
+                                window.location = uri.url;
+                            }
+                            
+                        }
+                    } else {
+                        location.reload();
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                switch (xhr.status) {
+                    case 500:
+                        alert('500 status code! internal server error, please contact administrator.');
+                        break;
+                    case 302:
+                        alert('session expire, please login.');
+                        location.reload();
+                        break;
+                    default:
+                        alert(xhr.responseText);
+                        location.reload();
+                        break;
+                }
+                
+                $("#message").addClass("hidden");
+                submitBtn.removeClass("disabled");
+                submitBtn.attr("type", "submit");
+                submitBtn.html('<span class="fa fa-save"></span> {{'save'|trans}}');
+            }
+        });
+    });
+</script>
+
+    {% block javascripts %}{% endblock %}
+    
+</div>
