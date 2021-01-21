@@ -20,16 +20,17 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
-        "symfony/var-dumper": "^4.0|^5.0|^5.1"
+        "symfony/var-dumper": "^4.0|^5.0"
     },
     "require": {
-        "symfony/http-kernel": "^4.0|^5.0|^5.1",
-        "symfony/dependency-injection": "^4.0|^5.0|^5.1",
-        "symfony/form": "^4.0|^5.0|^5.1",
-        "symfony/config": "^4.0|^5.0|^5.1",
-        "symfony/http-foundation": "^4.0|^5.0|^5.1",
+        "symfony/http-kernel": "^4.0|^5.0",
+        "symfony/dependency-injection": "^4.0|^5.0",
+        "symfony/form": "^4.0|^5.0",
+        "symfony/config": "^4.0|^5.0",
+        "symfony/http-foundation": "^4.0|^5.0",
         "doctrine/orm": "^2.7|^3.0",
-        "symfony/framework-bundle": "^4.0|^5.0|^5.1",
-        "symfony/translation-contracts": "^2.3"
+        "symfony/framework-bundle": "^4.0|^5.0",
+        "symfony/translation-contracts": "^2.3",
+        "lexik/form-filter-bundle": "^6.0"
     }
 }
