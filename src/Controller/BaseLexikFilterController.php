@@ -7,6 +7,7 @@
 namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Common\Proxy\Proxy;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -154,7 +155,7 @@ abstract class BaseLexikFilterController extends BaseController
             }
 
             $manager = $this->getDoctrine()->getManager();
-            if (!$manager->getMetadataFactory()->isTransient(get_class($v))) {
+            if (!$manager->getMetadataFactory()->isTransient(get_class($v)) or $v instanceof Proxy) {
                 $filters[$k] = $manager->persist($v);
             }
         }
