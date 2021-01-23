@@ -55,4 +55,31 @@ abstract class AbstractControllerTest extends WebTestCase
     {
         return $this->router->generate($name, $parameters, $referenceType);
     }
+    
+    protected function getExcelFormats():array
+    {
+        return [
+            'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+    }
+    
+    protected function isExcelResponse(string $url)
+    {
+        $excels = $this->getExcelFormats();
+        $this->client->request(Request::METHOD_GET, $url);
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->assertTrue(in_array($this->client->getResponse()->headers->get('content-type'), $excels));
+    }
+    
+    protected function getPdfType()
+    {
+        return ['application/pdf'];
+    }
+    
+    protected function isPdfResponse(string $url)
+    {
+        $this->client->request(Request::METHOD_GET, $url);
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->assertTrue(in_array($this->client->getResponse()->headers->get('content-type'), $this->getPdfType()));
+    }
 }
