@@ -251,7 +251,7 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
         $this->assertTrue($output['process'] and $output['status']);
     }
     
-    protected function doDelete(string $url, $object, string $urlReferer = null, $isAjax = false)
+    protected function doDelete(string $url, $object, string $urlReferer = null, $isAjax = false, bool $checkObject = false)
     {
         $this->login();
         
@@ -267,15 +267,21 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
         ], [], $server);
         
         if ($urlReferer) {
+            $this->assertTrue($this->client->getResponse()->isRedirect($urlReferer));
+        } else {
             $this->assertTrue($this->client->getResponse()->isRedirection());
         }
+            
         if ($isAjax) {
             $result = json_decode($this->client->getResponse()->getContent(), true);
             $this->assertTrue($result['status']);
         }
         
-        $objects = $this->doctrine->getRepository(get_class($object))->find($identifier);
-        $this->assertNull($objects);
+        if ($checkObject) {
+            $objects = $this->doctrine->getRepository(get_class($object))->find($identifier);
+            $this->assertNull($objects);
+        }
+            
     }
     
     protected function doShow(string $url) {
