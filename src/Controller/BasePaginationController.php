@@ -25,6 +25,11 @@ class BasePaginationController extends BaseController
      */
     protected $paginator;
     
+    /**
+     * @var int
+     */
+    protected $limit = 20;
+    
     public function __construct(PaginatorInterface $paginator, TranslatorInterface $translator) {
         
         $this->paginator = $paginator;

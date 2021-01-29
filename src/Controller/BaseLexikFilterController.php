@@ -29,11 +29,6 @@ abstract class BaseLexikFilterController extends BasePaginationController
      */
     protected $filterBuilderUpdater;
     
-    /**
-     * @var int
-     */
-    protected $limit = 20;
-    
     public function __construct(TranslatorInterface $translator, FilterBuilderUpdaterInterface $filterBuilderUpdater, PaginatorInterface $paginator) 
     {
         $this->filterBuilderUpdater = $filterBuilderUpdater;
