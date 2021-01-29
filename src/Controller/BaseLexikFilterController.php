@@ -13,14 +13,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPaginationInterface;
+
 
 /**
  * @package Kematjaya\BaseControllerBundle\Controller
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
-abstract class BaseLexikFilterController extends BaseController
+abstract class BaseLexikFilterController extends BasePaginationController
 {
     
     /**
@@ -30,12 +30,6 @@ abstract class BaseLexikFilterController extends BaseController
     protected $filterBuilderUpdater;
     
     /**
-     * 
-     * @var PaginatorInterface
-     */
-    protected $paginator;
-    
-    /**
      * @var int
      */
     protected $limit = 20;
@@ -43,30 +37,8 @@ abstract class BaseLexikFilterController extends BaseController
     public function __construct(TranslatorInterface $translator, FilterBuilderUpdaterInterface $filterBuilderUpdater, PaginatorInterface $paginator) 
     {
         $this->filterBuilderUpdater = $filterBuilderUpdater;
-        $this->paginator = $paginator;
         
-        parent::__construct($translator);
-    }
-    
-    /**
-     * create paginator object
-     * @param QueryBuilder $queryBuilder
-     * @param Request $request
-     * @return SlidingPaginationInterface
-     */
-    protected function createPaginator(QueryBuilder $queryBuilder, Request $request): SlidingPaginationInterface
-    {
-        if ($request->get('_limit') && is_numeric($request->get('_limit'))) {
-            $request->getSession()->set('limit', $request->get('_limit'));
-        }
-        
-        if (!$request->getSession()->get("limit")) {
-            $request->getSession()->set('limit', $this->limit);
-        }
-        
-        $limit = $request->getSession()->get("limit", $this->limit);
-        
-        return $this->paginator->paginate($queryBuilder, $request->query->getInt('page', 1), $limit);
+        parent::__construct($paginator, $translator);
     }
     
     /**
