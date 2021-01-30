@@ -1,0 +1,19 @@
+{% use "bootstrap_3_layout.html.twig" %}
+
+{% block base_checkbox_widget %}
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{% endblock %}
+
+{% block checkbox_widget -%}
+    {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
+    {% if 'checkbox-inline' in parent_label_class %}
+        {{- form_label(form, null, { widget: block('base_checkbox_widget') }) -}}
+    {% else -%}
+        <br/>
+        <div class="alert alert-info">
+            {{- form_label(form, null, { widget: block('base_checkbox_widget') }) -}}
+        </div>
+    {%- endif -%}
+    
+    
+{%- endblock checkbox_widget %}
