@@ -15,7 +15,22 @@ use Lexik\Bundle\FormFilterBundle\Filter\Query\QueryInterface;
  */
 trait FilterFunctionTrait 
 {
-    function floatRangeQuery()
+    protected function JSONQuery()
+    {
+        return function(QueryInterface $filterQuery, $field, $values) {
+            if (empty($values['value'])) {
+                
+                return null;
+            }
+
+            $expr = $filterQuery->getExpr();
+            $expression = $expr->like('TEXT('.$field.')', $expr->literal("%" . $values['value'] . "%"));
+            
+            return $filterQuery->createCondition($expression);
+        };
+    }
+    
+    protected function floatRangeQuery()
     {
         return function(QueryInterface $filterQuery, $field, $values) {
             if (!$values['value']) {
@@ -50,16 +65,17 @@ trait FilterFunctionTrait
             
             if (!empty($condition)) {
                 $condition = implode(" AND ", $condition);
+                
                 return $filterQuery->createCondition($condition);
             }
-
+            
+            return '';
         };
     }
     
-    function dateRangeQuery() 
+    protected function dateRangeQuery() 
     {
-        return function (QueryInterface $filterQuery, $field, $values)
-        {
+        return function (QueryInterface $filterQuery, $field, $values) {
             if (!$values['value']) {
                 
                 return false;
@@ -86,6 +102,7 @@ trait FilterFunctionTrait
             }
 
             $condition = implode(" AND ", $condition);
+            
             return $filterQuery->createCondition($condition);
         };
     }
