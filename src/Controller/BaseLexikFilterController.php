@@ -54,7 +54,7 @@ abstract class BaseLexikFilterController extends BasePaginationController
     /**
      * Creating filter form object
      * @param string $type
-     * @param type $data
+     * @param object $data
      * @param array $options
      * @return FormInterface
      */
@@ -63,7 +63,8 @@ abstract class BaseLexikFilterController extends BasePaginationController
         $form = parent::createForm($type, $data, $options);
         $filters = $this->getFilters($form->getName());
         if (!empty($filters)) {
-            $form->setData($this->getFilters($form->getName()));
+            
+            $form = parent::createForm($type, $filters, $options);
         }
         
         return $form;
@@ -83,7 +84,7 @@ abstract class BaseLexikFilterController extends BasePaginationController
      * Set filter value
      * @param Request $request
      * @param FormInterface $form
-     * @return type
+     * @return object|null
      */
     protected function setFilters(Request $request, FormInterface $form)
     {
@@ -96,11 +97,11 @@ abstract class BaseLexikFilterController extends BasePaginationController
         if ($filters) {
             $form->submit($filters);
             $this->get('session')->set($form->getName(), $form->getData());
-        } else {
-            $filters = $this->getFilters($form->getName());
+            
+            return $this->getFilters($form->getName());
         }
         
-        return $filters;
+        return $this->getFilters($form->getName());
     }
     
     /**
@@ -123,7 +124,7 @@ abstract class BaseLexikFilterController extends BasePaginationController
 
             $manager = $this->getDoctrine()->getManager();
             if (!$manager->getMetadataFactory()->isTransient(get_class($v)) or $v instanceof Proxy) {
-                $filters[$k] = $manager->persist($v);
+                $filters[$k] = $manager->getRepository(get_class($v))->find($v->getId());
             }
         }
         
