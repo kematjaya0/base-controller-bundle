@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of the helpdesk.
+ * This file is part of the BaseControllerBundle.
  */
 
 namespace Kematjaya\BaseControllerBundle\Type;
@@ -21,7 +21,7 @@ use libphonenumber\PhoneNumberUtil;
 use libphonenumber\PhoneNumberFormat;
 
 /**
- * @package App\Form
+ * @package Kematjaya\BaseControllerBundle\Type
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
@@ -50,6 +50,7 @@ class PhoneNumberType extends AbstractType
                 
                 return $value;
             }, function ($value) use ($options) {
+                $value = trim(str_replace("-", "", str_replace($this->getPhonePrefix($options['region']), "", $value)));
                 $value = $this->getPhonePrefix($options['region']) . preg_replace("/[a-z]/i", "", $value);
                 try {
                     $phoneNumber = $this->phoneUtil->parse(trim($value), $options['region']);
