@@ -44,16 +44,32 @@ class BasePaginationController extends BaseController
      */
     protected function createPaginator(QueryBuilder $queryBuilder, Request $request): SlidingPaginationInterface
     {
-        if ($request->get('_limit') && is_numeric($request->get('_limit'))) {
-            $request->getSession()->set('limit', $request->get('_limit'));
+        return $this->paginator->paginate($queryBuilder, $request->query->getInt('page', 1), $this->processLimit($request));
+    }
+    
+    /**
+     * 
+     * @param array $data
+     * @param Request $request
+     * @return SlidingPaginationInterface
+     */
+    protected function createArrayPaginator(array $data = [], Request $request): SlidingPaginationInterface
+    {
+        return $this->paginator->paginate($data, $request->query->getInt('page', 1), $this->processLimit($request));
+    }
+    
+    /**
+     * 
+     * @param Request $request
+     * @return int
+     */
+    protected function processLimit(Request $request):int
+    {
+        $limit = is_numeric($request->get('_limit')) ? (int) $request->get('_limit') : $this->limit;
+        if ($limit) {
+            $request->getSession()->set('limit', $limit);
         }
         
-        if (!$request->getSession()->get("limit")) {
-            $request->getSession()->set('limit', $this->limit);
-        }
-        
-        $limit = $request->getSession()->get("limit", $this->limit);
-        
-        return $this->paginator->paginate($queryBuilder, $request->query->getInt('page', 1), $limit);
+        return $request->getSession()->get("limit", $this->limit);
     }
 }

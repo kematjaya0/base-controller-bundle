@@ -43,13 +43,12 @@ abstract class BaseLexikFilterController extends BasePaginationController
      * @param QueryBuilder $queryBuilder
      * @return QueryBuilder
      */
-    protected function buildFilter(Request $request, FormInterface $form, QueryBuilder $queryBuilder): QueryBuilder 
+    protected function buildFilter(Request $request, FormInterface &$form, QueryBuilder $queryBuilder): QueryBuilder 
     {
         $this->setFilters($request, $form);
         
         return $this->filterBuilderUpdater->addFilterConditions($form, $queryBuilder);
     }
-    
     
     /**
      * Creating filter form object
@@ -58,14 +57,12 @@ abstract class BaseLexikFilterController extends BasePaginationController
      * @param array $options
      * @return FormInterface
      */
-    protected function createFormFilter(string $type, $data = null, array $options = array()): FormInterface 
+    protected function createFormFilter(string $type, array $options = array()): FormInterface 
     {
+        $reflection = new \ReflectionClass($type);
+        $name = sprintf("%s", strtolower($reflection->getShortName()));
+        $data = $this->getFilters($name);
         $form = parent::createForm($type, $data, $options);
-        $filters = $this->getFilters($form->getName());
-        if (!empty($filters)) {
-            
-            $form = parent::createForm($type, $filters, $options);
-        }
         
         return $form;
     }
@@ -84,24 +81,26 @@ abstract class BaseLexikFilterController extends BasePaginationController
      * Set filter value
      * @param Request $request
      * @param FormInterface $form
-     * @return object|null
      */
-    protected function setFilters(Request $request, FormInterface $form)
+    protected function setFilters(Request $request, FormInterface &$form)
     {
-        if ($request->get('_reset')) {
-            $form->setData(null);
+        if ($request->query->get('_reset') and Request::METHOD_GET === $request->getMethod()) {
+            $type = get_class($form->getConfig()->getType()->getInnerType());
+            $options = $form->getConfig()->getOptions();
+            $options['data'] = null;
+            $form = parent::createForm($type, null, $options);
             $this->resetFilters($form);
+            
+            return $form;
         }
         
         $filters = $request->get($form->getName());
         if ($filters) {
             $form->submit($filters);
             $this->get('session')->set($form->getName(), $form->getData());
-            
-            return $this->getFilters($form->getName());
         }
         
-        return $this->getFilters($form->getName());
+        return $form;
     }
     
     /**
