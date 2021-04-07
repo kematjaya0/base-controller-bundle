@@ -100,14 +100,24 @@ abstract class BaseController extends AbstractController
         try {
             $object = $this->saveObject($form->getData(), $manager);
 
-            $this->addFlash("info", $this->translator->trans('successfull_save'));
+            $this->addFlash("info", $this->getSuccessMessage($object));
 
             return $object;
         } catch (\Exception $ex) {
-            $this->addFlash("error", 'error : ' . $ex->getMessage());
+            $this->addFlash("error", $this->getErrorMessage($ex));
         }
         
         return false;
+    }
+    
+    protected function getSuccessMessage($object):string
+    {
+        return $this->translator->trans('successfull_save');
+    }
+    
+    protected function getErrorMessage(\Exception $ex):string
+    {
+        return $ex->getMessage();
     }
     
     protected function getErrorsFromForm(FormInterface $form):array
@@ -147,7 +157,7 @@ abstract class BaseController extends AbstractController
             
             $this->addFlash('info', $this->translator->trans('successfull_delete'));
         } catch (\Exception $ex) {
-            $this->addFlash('error', 'error :' . $ex->getMessage());
+            $this->addFlash('error', $this->getErrorMessage($ex));
         }
     }
     
