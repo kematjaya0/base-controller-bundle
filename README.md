@@ -132,7 +132,7 @@ class FooController extends BaseController
 ```
 3.2. Form Type
 ```
-// App/Form/FooType.php
+// src/Form/FooType.php
 ...
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
@@ -163,4 +163,29 @@ class FooType extends AbstractType
 twig:
     form_themes: 
         - '@BaseController/phone_number_layout.html.twig'
+```
+3.3 Filter
+- filter form base on LexikFormFilterBundle : https://github.com/lexik/LexikFormFilterBundle
+- usage:
+```
+// src/Filter/FooFilterType.php
+...
+use Symfony\Component\Form\FormBuilderInterface;
+use Kematjaya\BaseControllerBundle\Filter\AbstractFilterType;
+...
+
+class FooFilterType extends AbstractFilterType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->add('roles', Filters\ChoiceFilterType::class, [
+                'choices' => [],
+                // query json use JSONQuery(), 
+                // date range filter use dateRangeQuery(),
+                // float / integer range use floatRangeQuery()
+                'apply_filter' => $this->JSONQuery(),
+                // 
+            ]);
+    }
+}
 ```
