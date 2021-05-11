@@ -65,11 +65,11 @@ class BasePaginationController extends BaseController
      */
     protected function processLimit(Request $request):int
     {
-        $limit = is_numeric($request->get('_limit')) ? (int) $request->get('_limit') : $this->limit;
-        if ($limit) {
+        $limit = is_numeric($request->get('_limit')) ? (int) $request->get('_limit') : null;
+        if (null !== $limit) {
             $request->getSession()->set('limit', $limit);
         }
         
-        return $request->getSession()->get("limit", $this->limit);
+        return $request->getSession()->get("limit", $limit);
     }
 }
