@@ -70,6 +70,6 @@ class BasePaginationController extends BaseController
             $request->getSession()->set('limit', $limit);
         }
         
-        return $request->getSession()->get("limit", $limit);
+        return $request->getSession()->get("limit", $this->limit);
     }
 }
