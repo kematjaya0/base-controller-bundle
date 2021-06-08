@@ -8,3 +8,5 @@ services:
     Kematjaya\BaseControllerBundle\Type\AutoCompleteType: ~
     Kematjaya\BaseControllerBundle\Type\FloatRangeType: ~
     Kematjaya\BaseControllerBundle\Type\PhoneNumberType: ~
+    Kematjaya\BaseControllerBundle\Twig\ArrayExtension:
+        tags: ['twig.extension']
