@@ -46,9 +46,14 @@ class PhoneNumberType extends AbstractType
     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addModelTransformer(new CallbackTransformer(function ($value) {
+        $builder->addModelTransformer(new CallbackTransformer(function ($value) use ($options) {
+                if (null === $value) {
+                    return $value;
+                }
                 
-                return $value;
+                $prefix = $this->getPhonePrefix($options['region']);
+                
+                return trim(str_replace($prefix, "", $value));
             }, function ($value) use ($options) {
                 $value = trim(str_replace("-", "", str_replace($this->getPhonePrefix($options['region']), "", $value)));
                 $value = $this->getPhonePrefix($options['region']) . preg_replace("/[a-z]/i", "", $value);
