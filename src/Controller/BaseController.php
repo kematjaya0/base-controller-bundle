@@ -53,7 +53,7 @@ abstract class BaseController extends AbstractController
             return ["process" => false];
         }
         
-        $type = ($form->getData() && !is_array($form->getData()) && $form->getData()->getId()) ? "update": "add";
+        $type = 'add';
         if (!$form->isValid()) {
             
             $errors = $this->getErrorsFromForm($form);
