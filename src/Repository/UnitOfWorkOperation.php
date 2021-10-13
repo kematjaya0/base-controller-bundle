@@ -40,30 +40,36 @@ trait UnitOfWorkOperation
      */
     protected function doPersist($object): void
     {
-        if (!$object->getId()) {
+        $uow = $this->_em->getUnitOfWork();
+        if (!$uow->isScheduledForInsert($object)) {
             $this->create($object);
             
             return;
         } 
         
-        $uow = $this->_em->getUnitOfWork();
         try {
             $entityChangeSet    = $uow->getEntityChangeSet($object);
             $classMetadata      = $this->_em->getClassMetadata(get_class($object));
-            $uow->computeChangeSet($classMetadata, $object);
+            
+            $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
             $entityChangeSetNew = array_merge($entityChangeSet, $uow->getEntityChangeSet($object));
+            
             if (!empty($entityChangeSetNew)) {
-                foreach ($entityChangeSetNew as $key => $value) {
-                    $entityChangeSet[$key] = $value;
+                foreach ($classMetadata->reflFields as $key => $v) {
+                    if (!isset($entityChangeSetNew[$key])) {
+                        continue;
+                    }
+                    
+                    $entityChangeSet[$key] = $entityChangeSetNew[$key];
                 }
 
                 $uow->clearEntityChangeSet(spl_object_hash($object));
             }
-
+            
             foreach ($entityChangeSet as $attribute => $value) {
                 $uow->propertyChanged($object, $attribute, $value[0], $value[1]);
             }
-
+            
             $this->_em->persist($object);
         } catch (\Exception $ex) {
             
