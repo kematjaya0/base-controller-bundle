@@ -1,0 +1,35 @@
+{% block auto_complete_widget %}
+    <input type="hidden" name="{{ full_name }}" id="{{ id }}"/>
+    <input type="text" id="auto_complete_{{ name }}" {{ html_attributes|raw }} />
+    
+    {{- block('auto_complete_javascript') -}}
+    
+{% endblock %}
+
+{% block auto_complete_javascript %}
+    <script>
+    $(function () {
+        $('#auto_complete_{{ name }}').autocomplete({
+            source: function (request, response) {
+                let dom = $(this.element[0]);
+                
+                $.ajax({
+                    url: dom.attr("url"),
+                    data: { query: request.term },
+                    success: function (data) {
+                        
+                        response(data);
+                    },
+                    error: function () {
+                        response([]);
+                    }
+                });
+            }
+            {% if appendTo %}
+                ,appendTo: "{{ appendTo }}"
+            {% endif %}
+        });
+    });
+        
+    </script>
+{% endblock %}
