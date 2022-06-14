@@ -1,6 +1,5 @@
 {% block auto_complete_widget %}
-    <input type="hidden" name="{{ full_name }}" id="{{ id }}"/>
-    <input type="text" id="auto_complete_{{ name }}" {{ html_attributes|raw }} />
+    <input type="text" name="{{ full_name }}" id="auto_complete_{{ name }}" {{ html_attributes|raw }} />
     
     {{- block('auto_complete_javascript') -}}
     
