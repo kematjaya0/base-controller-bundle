@@ -41,7 +41,7 @@ trait UnitOfWorkOperation
     protected function doPersist($object): void
     {
         $uow = $this->_em->getUnitOfWork();
-        if (!$uow->isScheduledForInsert($object)) {
+        if (null == $uow->getSingleIdentifierValue($object) and !$uow->isScheduledForInsert($object)) {
             $this->create($object);
             
             return;
