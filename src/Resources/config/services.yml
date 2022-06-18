@@ -6,6 +6,7 @@ services:
         
     Kematjaya\BaseControllerBundle\Type\DateRangeType: ~
     Kematjaya\BaseControllerBundle\Type\AutoCompleteType: ~
+    Kematjaya\BaseControllerBundle\Type\AutoCompleteEntityType: ~
     Kematjaya\BaseControllerBundle\Type\FloatRangeType: ~
     Kematjaya\BaseControllerBundle\Type\PhoneNumberType: ~
     Kematjaya\BaseControllerBundle\Twig\ArrayExtension:

@@ -1,0 +1,55 @@
+{% block auto_complete_entity_widget %}
+    <input type="hidden" name="{{ full_name }}" id="{{ id }}" value="{{ data }}"/>
+    <input type="text" id="auto_complete_{{ name }}" value="{{ label_data }}" {{ html_attributes|raw }} />
+    
+    {{- block('auto_complete_javascript') -}}
+    
+{% endblock %}
+
+{% block auto_complete_javascript %}
+    <script>
+    $(function () {
+        var {{ name }} = [];
+        var parentDOM = null;
+        if ($(".modal").length > 0) {
+            parentDOM = ($(".modal").find('#auto_complete_{{ name }}').length > 0) ? "#" + $(".modal").attr("id") : null;
+        }
+        
+        $('#auto_complete_{{ name }}').autocomplete({
+            change: function (event, ui) {
+                if (this.value.length <= 0) {
+                    return;
+                }
+                let value = this.value;
+                let selected = $.grep({{ name }}, function (i) {
+                    return i.label === value;
+                }); 
+                
+                if (selected.length <= 0) {
+                    alert("value not found.");
+                    return;
+                }
+                
+                $("#{{ id }}").val(selected[0].id);
+                
+            },
+            source: function (request, response) {
+                let dom = $(this.element[0]);
+                $.ajax({
+                    url: '{{ url }}',
+                    data: { query: request.term },
+                    success: function (data) {
+                        {{ name }} = data;
+                        response(data);
+                    },
+                    error: function () {
+                        response([]);
+                    }
+                });
+            },
+            appendTo: parentDOM
+        });
+    });
+        
+    </script>
+{% endblock %}

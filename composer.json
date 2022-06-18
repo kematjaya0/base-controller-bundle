@@ -23,19 +23,21 @@
         "symfony/var-dumper": "^4.0|^5.0"
     },
     "require": {
+        "doctrine/orm": "^2.7|^3.0",
+        "doctrine/persistence": "^2.0",
         "symfony/http-kernel": "^4.0|^5.0",
         "symfony/dependency-injection": "^4.0|^5.0",
         "symfony/form": "^4.0|^5.0",
         "symfony/config": "^4.0|^5.0",
         "symfony/http-foundation": "^4.0|^5.0",
-        "doctrine/orm": "^2.7|^3.0",
         "symfony/framework-bundle": "^4.0|^5.0",
         "symfony/translation-contracts": "^2.3",
         "lexik/form-filter-bundle": "^6.0",
         "knplabs/knp-paginator-bundle": "^5.3",
         "symfony/dom-crawler": "^4.0|^5.0",
-        "doctrine/doctrine-bundle": "^2.2",
         "haydenpierce/class-finder": "^0.4.3",
-        "giggsey/libphonenumber-for-php": "^8.12"
+        "giggsey/libphonenumber-for-php": "^8.12",
+        "symfony/property-access": "^5.0",
+        "kematjaya/hidden-type-bundle": "^1.1"
     }
 }
