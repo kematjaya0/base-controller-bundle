@@ -1,6 +1,20 @@
 {% block auto_complete_widget %}
-    <input type="text" name="{{ full_name }}" id="auto_complete_{{ name }}" {{ html_attributes|raw }} />
+    <style>
+        .loader {
+            width: 2rem;
+            background-color: #FFF;
+            background-repeat: no-repeat;
+            z-index: 10;
+            margin-top: -1.5em;
+            float: right;
+            margin-right: 0.5rem;
+        }
+    </style>
     
+    <input type="text" name="{{ full_name }}" id="auto_complete_{{ name }}" {{ html_attributes|raw }} />
+    <div id="icon-container-{{ name }}" style="display: none">
+      <img class="loader" src="{{ asset('bundles/basecontroller/images/loading.gif') }}"></i>
+    </div>
     {{- block('auto_complete_javascript') -}}
     
 {% endblock %}
@@ -11,12 +25,12 @@
         $('#auto_complete_{{ name }}').autocomplete({
             source: function (request, response) {
                 let dom = $(this.element[0]);
-                
+                $("#icon-container-{{ name }}").attr("style", "display: contents");
                 $.ajax({
                     url: dom.attr("url"),
                     data: { query: request.term },
                     success: function (data) {
-                        
+                        $("#icon-container-{{ name }}").attr("style", "display: none");
                         response(data);
                     },
                     error: function () {

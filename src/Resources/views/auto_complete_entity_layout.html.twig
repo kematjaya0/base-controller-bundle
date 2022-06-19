@@ -1,7 +1,20 @@
 {% block auto_complete_entity_widget %}
+    <style>
+        .loader {
+            width: 2rem;
+            background-color: #FFF;
+            background-repeat: no-repeat;
+            z-index: 10;
+            margin-top: -1.5em;
+            float: right;
+            margin-right: 0.5rem;
+        }
+    </style>
     <input type="hidden" name="{{ full_name }}" id="{{ id }}" value="{{ data }}"/>
     <input type="text" id="auto_complete_{{ name }}" value="{{ label_data }}" {{ html_attributes|raw }} />
-    
+    <div id="icon-container-{{ name }}" style="display: none">
+      <img class="loader" src="{{ asset('bundles/basecontroller/images/loading.gif') }}"></i>
+    </div>
     {{- block('auto_complete_javascript') -}}
     
 {% endblock %}
@@ -34,11 +47,13 @@
             },
             source: function (request, response) {
                 let dom = $(this.element[0]);
+                $("#icon-container-{{ name }}").attr("style", "display: contents");
                 $.ajax({
                     url: '{{ url }}',
                     data: { query: request.term },
                     success: function (data) {
                         {{ name }} = data;
+                        $("#icon-container-{{ name }}").attr("style", "display: none");
                         response(data);
                     },
                     error: function () {
