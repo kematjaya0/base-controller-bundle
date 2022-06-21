@@ -32,7 +32,7 @@
         "symfony/http-foundation": "^4.0|^5.0",
         "symfony/framework-bundle": "^4.0|^5.0",
         "symfony/translation-contracts": "^2.3",
-        "lexik/form-filter-bundle": "^6.0",
+        "lexik/form-filter-bundle": "^6.0|^7.0",
         "knplabs/knp-paginator-bundle": "^5.3",
         "symfony/dom-crawler": "^4.0|^5.0",
         "haydenpierce/class-finder": "^0.4.3",
