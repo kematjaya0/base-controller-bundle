@@ -22,7 +22,7 @@ class ControllerCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container):void 
     {
-        $translatorServices = $container->findTaggedServiceIds(TranslatorControllerInterface::TAG_NAME);
+        $translatorServices = $container->findTaggedServiceIds(TranslatorControllerInterface::CONTROLLER_TAG_NAME);
         foreach (array_keys($translatorServices) as $className) {
             $container->findDefinition($className)->addMethodCall("setTranslator");
         }
@@ -32,7 +32,7 @@ class ControllerCompilerPass implements CompilerPassInterface
             $container->findDefinition($className)->addMethodCall("setPaginator");
         }
         
-        $filterServices = $container->findTaggedServiceIds(LexikFilterControllerInterface::TAG_NAME);
+        $filterServices = $container->findTaggedServiceIds(LexikFilterControllerInterface::TAGGING_NAME);
         foreach (array_keys($filterServices) as $className) {
             $container->findDefinition($className)->addMethodCall("setFilterBuilderUpdater");
         }

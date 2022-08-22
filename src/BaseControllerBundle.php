@@ -17,13 +17,13 @@ class BaseControllerBundle extends Bundle
     public function build(ContainerBuilder $container) 
     {
         $container->registerForAutoconfiguration(TranslatorControllerInterface::class)
-                ->addTag(TranslatorControllerInterface::TAG_NAME);
+                ->addTag(TranslatorControllerInterface::CONTROLLER_TAG_NAME);
         
         $container->registerForAutoconfiguration(PaginationControllerInterface::class)
                 ->addTag(PaginationControllerInterface::TAG_NAME);
         
         $container->registerForAutoconfiguration(LexikFilterControllerInterface::class)
-                ->addTag(LexikFilterControllerInterface::TAG_NAME);
+                ->addTag(LexikFilterControllerInterface::TAGGING_NAME);
         
         $container->addCompilerPass(new ControllerCompilerPass());
         

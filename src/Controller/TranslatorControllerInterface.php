@@ -15,7 +15,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 interface TranslatorControllerInterface 
 {
-    const TAG_NAME = "controller.translator_arguments";
+    const CONTROLLER_TAG_NAME = "controller.translator_arguments";
     
     public function setTranslator(TranslatorInterface $translator):void;
     
