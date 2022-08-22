@@ -16,7 +16,7 @@ use Twig\TwigFunction;
  */
 class ArrayExtension extends AbstractExtension 
 {
-    public function getFunctions()
+    public function getFunctions():array
     {
         return [
             new TwigFunction('in_array', function($value, $arr) {

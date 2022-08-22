@@ -43,6 +43,10 @@ class AutoCompleteEntityType extends AbstractType
         $this->registry = $registry;
     }
     
+    /**
+     * 
+     * @return ?string
+     */
     public function getParent()
     {
         return TextType::class;

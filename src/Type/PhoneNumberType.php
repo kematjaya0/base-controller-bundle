@@ -108,6 +108,7 @@ class PhoneNumberType extends AbstractType
     
     /**
      * {@inheritdoc}
+     * @return string Description
      */
     public function getParent()
     {
@@ -116,6 +117,7 @@ class PhoneNumberType extends AbstractType
 
     /**
      * {@inheritdoc}
+     * @return string Description
      */
     public function getBlockPrefix()
     {

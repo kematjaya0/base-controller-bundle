@@ -11,7 +11,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class AutoCompleteType extends AbstractType
 {
-    
+    /**
+     * 
+     * @return string
+     */
     public function getParent()
     {
         return TextType::class;
