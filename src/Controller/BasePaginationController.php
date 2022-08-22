@@ -9,7 +9,6 @@ namespace Kematjaya\BaseControllerBundle\Controller;
 use Doctrine\ORM\QueryBuilder;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -17,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
-class BasePaginationController extends BaseController
+abstract class BasePaginationController extends BaseController implements PaginationControllerInterface
 {
     /**
      * 
@@ -30,10 +29,9 @@ class BasePaginationController extends BaseController
      */
     protected $limit = 20;
     
-    public function __construct(PaginatorInterface $paginator, TranslatorInterface $translator) {
-        
+    public function setPaginator(PaginatorInterface $paginator):void 
+    {   
         $this->paginator = $paginator;
-        parent::__construct($translator);
     }
     
     /**
@@ -44,7 +42,11 @@ class BasePaginationController extends BaseController
      */
     protected function createPaginator(QueryBuilder $queryBuilder, Request $request): SlidingPaginationInterface
     {
-        return $this->paginator->paginate($queryBuilder, $request->query->getInt('page', 1), $this->processLimit($request));
+        return $this->getPaginator()->paginate(
+            $queryBuilder, 
+            $request->query->getInt('page', 1), 
+            $this->processLimit($request)
+        );
     }
     
     /**
@@ -55,7 +57,11 @@ class BasePaginationController extends BaseController
      */
     protected function createArrayPaginator(array $data = [], Request $request): SlidingPaginationInterface
     {
-        return $this->paginator->paginate($data, $request->query->getInt('page', 1), $this->processLimit($request));
+        return $this->getPaginator()->paginate(
+            $data, 
+            $request->query->getInt('page', 1), 
+            $this->processLimit($request)
+        );
     }
     
     /**
@@ -72,4 +78,10 @@ class BasePaginationController extends BaseController
         
         return $request->getSession()->get("limit", $this->limit);
     }
+
+    public function getPaginator(): PaginatorInterface 
+    {
+        return $this->paginator;
+    }
+
 }

@@ -18,9 +18,14 @@ abstract class AbstractFilterType extends AbstractType
 {
     use FilterFunctionTrait;
     
+    /**
+     * 
+     * @return string
+     */
     public function getBlockPrefix()
     {
         $class = explode('\\', strtolower(get_class($this)));
+        
         return end($class);
     }
 

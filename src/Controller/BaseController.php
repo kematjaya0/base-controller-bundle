@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
-abstract class BaseController extends AbstractController 
+abstract class BaseController extends AbstractController implements TranslatorControllerInterface
 {
     /**
      *
@@ -19,9 +19,14 @@ abstract class BaseController extends AbstractController
      */
     protected $translator;
     
-    public function __construct(TranslatorInterface $translator) 
+    public function setTranslator(TranslatorInterface $translator):void
     {
         $this->translator = $translator;
+    }
+    
+    public function getTranslator():TranslatorInterface
+    {
+        return $this->translator;
     }
     
     protected function buildSuccessResult(string $type, $object)
@@ -29,7 +34,7 @@ abstract class BaseController extends AbstractController
         return [
             "process" => true, 
             "status" => true, 
-            "message" => $this->translator->trans('messages.'.$type.'.success'), 
+            "message" => $this->getTranslator()->trans('messages.'.$type.'.success'), 
             "errors" => null
         ];
     }
@@ -39,7 +44,7 @@ abstract class BaseController extends AbstractController
         return [
             "process" => true, 
             "status" => false, 
-            "message" => $this->translator->trans('messages.'.$type.'.error'), 
+            "message" => $this->getTranslator()->trans('messages.'.$type.'.error'), 
             "errors" => $message
         ];
     }
@@ -112,7 +117,7 @@ abstract class BaseController extends AbstractController
     
     protected function getSuccessMessage($object):string
     {
-        return $this->translator->trans('successfull_save');
+        return $this->getTranslator()->trans('successfull_save');
     }
     
     protected function getErrorMessage(\Exception $ex):string
@@ -137,7 +142,7 @@ abstract class BaseController extends AbstractController
                 continue;
             } 
             
-            $errors[$childForm->getName()] = sprintf('%s: %s', $this->translator->trans($childForm->getName()), implode(", ", $childErrors));
+            $errors[$childForm->getName()] = sprintf('%s: %s', $this->getTranslator()->trans($childForm->getName()), implode(", ", $childErrors));
         }
         
         return $errors;
@@ -146,7 +151,7 @@ abstract class BaseController extends AbstractController
     protected function doDelete(Request $request, $object, string $tokenName):void
     {
         if (!$this->isCsrfTokenValid($tokenName, $request->request->get('_token'))) {
-            $this->addFlash('error', $this->translator->trans('csrf_token_detected'));
+            $this->addFlash('error', $this->getTranslator()->trans('csrf_token_detected'));
             return;
         }
         
@@ -155,7 +160,7 @@ abstract class BaseController extends AbstractController
             
             $this->removeObject($object, $manager);
             
-            $this->addFlash('info', $this->translator->trans('successfull_delete'));
+            $this->addFlash('info', $this->getTranslator()->trans('successfull_delete'));
         } catch (\Exception $ex) {
             $this->addFlash('error', $this->getErrorMessage($ex));
         }

@@ -10,9 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Proxy\Proxy;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
-use Knp\Component\Pager\PaginatorInterface;
 
 
 /**
@@ -20,7 +18,7 @@ use Knp\Component\Pager\PaginatorInterface;
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
-abstract class BaseLexikFilterController extends BasePaginationController
+abstract class BaseLexikFilterController extends BasePaginationController implements LexikFilterControllerInterface
 {
     
     /**
@@ -29,12 +27,16 @@ abstract class BaseLexikFilterController extends BasePaginationController
      */
     protected $filterBuilderUpdater;
     
-    public function __construct(TranslatorInterface $translator, FilterBuilderUpdaterInterface $filterBuilderUpdater, PaginatorInterface $paginator) 
+    public function setFilterBuilderUpdater(FilterBuilderUpdaterInterface $filterBuilderUpdater):void
     {
         $this->filterBuilderUpdater = $filterBuilderUpdater;
-        
-        parent::__construct($paginator, $translator);
     }
+    
+    public function getFilterBuilderUpdater():FilterBuilderUpdaterInterface
+    {
+        return $this->filterBuilderUpdater;
+    }
+    
     
     /**
      * Process form with QueryBuilder object
@@ -47,7 +49,7 @@ abstract class BaseLexikFilterController extends BasePaginationController
     {
         $this->setFilters($request, $form);
         
-        return $this->filterBuilderUpdater->addFilterConditions($form, $queryBuilder);
+        return $this->getFilterBuilderUpdater()->addFilterConditions($form, $queryBuilder);
     }
     
     /**
