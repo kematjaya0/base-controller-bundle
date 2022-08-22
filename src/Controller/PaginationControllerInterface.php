@@ -15,7 +15,7 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 interface PaginationControllerInterface 
 {
-    const TAG_NAME = "controller.pagination_arguments";
+    const CONST_TAG_NAME = "controller.pagination_arguments";
     
     public function setPaginator(PaginatorInterface $paginator):void;
     

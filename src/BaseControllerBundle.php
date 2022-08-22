@@ -20,7 +20,7 @@ class BaseControllerBundle extends Bundle
                 ->addTag(TranslatorControllerInterface::CONTROLLER_TAG_NAME);
         
         $container->registerForAutoconfiguration(PaginationControllerInterface::class)
-                ->addTag(PaginationControllerInterface::TAG_NAME);
+                ->addTag(PaginationControllerInterface::CONST_TAG_NAME);
         
         $container->registerForAutoconfiguration(LexikFilterControllerInterface::class)
                 ->addTag(LexikFilterControllerInterface::TAGGING_NAME);

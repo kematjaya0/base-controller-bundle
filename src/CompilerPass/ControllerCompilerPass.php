@@ -27,7 +27,7 @@ class ControllerCompilerPass implements CompilerPassInterface
             $container->findDefinition($className)->addMethodCall("setTranslator");
         }
         
-        $paginatorServices = $container->findTaggedServiceIds(PaginationControllerInterface::TAG_NAME);
+        $paginatorServices = $container->findTaggedServiceIds(PaginationControllerInterface::CONST_TAG_NAME);
         foreach (array_keys($paginatorServices) as $className) {
             $container->findDefinition($className)->addMethodCall("setPaginator");
         }
