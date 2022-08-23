@@ -4,20 +4,28 @@ namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Form\FormInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Twig\Environment;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
-abstract class BaseController extends AbstractController implements TranslatorControllerInterface
+abstract class BaseController extends AbstractController implements TwigControllerInterface, TranslatorControllerInterface
 {
     /**
      *
      * @var TranslatorInterface
      */
     protected $translator;
+    
+    /**
+     * 
+     * @var Environment
+     */
+    private $twig;
     
     public function setTranslator(TranslatorInterface $translator):void
     {
@@ -27,6 +35,51 @@ abstract class BaseController extends AbstractController implements TranslatorCo
     public function getTranslator():TranslatorInterface
     {
         return $this->translator;
+    }
+    
+    public function setTwig(Environment $twig):void
+    {
+        $this->twig = $twig;
+    }
+    
+    public function getTwig():Environment
+    {
+        return $this->twig;
+    }
+    
+    /**
+     * 
+     * @param string $view
+     * @param array $parameters
+     * @return string
+     */
+    protected function renderView(string $view, array $parameters = []): string
+    {
+        return $this->getTwig()->render($view, $parameters);
+    }
+    
+    /**
+     * Streams a view.
+     */
+    protected function stream(string $view, array $parameters = [], StreamedResponse $response = null): StreamedResponse
+    {
+        if (!$this->twig) {
+            throw new \LogicException('You cannot use the "stream" method if the Twig Bundle is not available. Try running "composer require symfony/twig-bundle".');
+        }
+
+        $twig = $this->getTwig();
+
+        $callback = function () use ($twig, $view, $parameters) {
+            $twig->display($view, $parameters);
+        };
+
+        if (null === $response) {
+            return new StreamedResponse($callback);
+        }
+
+        $response->setCallback($callback);
+
+        return $response;
     }
     
     protected function buildSuccessResult(string $type, $object)

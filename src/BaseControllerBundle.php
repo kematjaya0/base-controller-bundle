@@ -2,6 +2,7 @@
 
 namespace Kematjaya\BaseControllerBundle;
 
+use Kematjaya\BaseControllerBundle\Controller\TwigControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\LexikFilterControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\PaginationControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\TranslatorControllerInterface;
@@ -16,6 +17,9 @@ class BaseControllerBundle extends Bundle
 {
     public function build(ContainerBuilder $container) 
     {
+        $container->registerForAutoconfiguration(TwigControllerInterface::class)
+                ->addTag("controller.twig_arguments");
+        
         $container->registerForAutoconfiguration(TranslatorControllerInterface::class)
                 ->addTag(TranslatorControllerInterface::CONTROLLER_TAG_NAME);
         

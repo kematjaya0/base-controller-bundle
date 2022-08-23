@@ -27,6 +27,11 @@ class ControllerCompilerPass implements CompilerPassInterface
             $container->findDefinition($className)->addMethodCall("setTranslator");
         }
         
+        $twigServices = $container->findTaggedServiceIds("controller.twig_arguments");
+        foreach (array_keys($twigServices) as $className) {
+            $container->findDefinition($className)->addMethodCall("setTwig");
+        }
+        
         $paginatorServices = $container->findTaggedServiceIds(PaginationControllerInterface::CONST_TAG_NAME);
         foreach (array_keys($paginatorServices) as $className) {
             $container->findDefinition($className)->addMethodCall("setPaginator");
