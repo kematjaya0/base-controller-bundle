@@ -21,6 +21,13 @@
 
 {% block auto_complete_javascript %}
     <script>
+    function dispatchEvent{{ name|title }}() {
+        el = document.getElementById('{{ id }}');
+        ev = document.createEvent('Event');
+        ev.initEvent('change', true, false);
+        el.dispatchEvent(ev);
+    }
+    
     $(function () {
         var {{ name }} = [];
         var parentDOM = null;
@@ -31,19 +38,24 @@
         $('#auto_complete_{{ name }}').autocomplete({
             change: function (event, ui) {
                 if (this.value.length <= 0) {
+                    $("#{{ id }}").val(null);
+                    dispatchEvent{{ name|title }}();
                     return;
                 }
+                
                 let value = this.value;
                 let selected = $.grep({{ name }}, function (i) {
                     return i.label === value;
                 }); 
                 
                 if (selected.length <= 0) {
+                    $("#{{ id }}").val(null);
+                    dispatchEvent{{ name|title }}();
                     return;
                 }
                 
                 $("#{{ id }}").val(selected[0].id);
-                
+                dispatchEvent{{ name|title }}();
             },
             source: function (request, response) {
                 let dom = $(this.element[0]);
