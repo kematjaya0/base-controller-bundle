@@ -15,7 +15,7 @@ abstract class AbstractFilterType extends AbstractType
     use FilterFunctionTrait;
     
     /**
-     * 
+     *
      * @return string
      */
     public function getBlockPrefix()

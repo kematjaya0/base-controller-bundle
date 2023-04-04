@@ -1,9 +1,5 @@
 <?php
 
-/**
- * This file is part of the base-controller-bundle.
- */
-
 namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Doctrine\ORM\QueryBuilder;
@@ -19,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 abstract class BasePaginationController extends BaseController implements PaginationControllerInterface
 {
     /**
-     * 
+     *
      * @var PaginatorInterface
      */
     protected $paginator;
@@ -29,8 +25,8 @@ abstract class BasePaginationController extends BaseController implements Pagina
      */
     protected $limit = 20;
     
-    public function setPaginator(PaginatorInterface $paginator):void 
-    {   
+    public function setPaginator(PaginatorInterface $paginator):void
+    {
         $this->paginator = $paginator;
     }
     
@@ -43,8 +39,8 @@ abstract class BasePaginationController extends BaseController implements Pagina
     protected function createPaginator(QueryBuilder $queryBuilder, Request $request): SlidingPaginationInterface
     {
         return $this->getPaginator()->paginate(
-            $queryBuilder, 
-            $request->query->getInt('page', 1), 
+            $queryBuilder,
+            $request->query->getInt('page', 1),
             $this->processLimit($request)
         );
     }

@@ -1,9 +1,5 @@
 <?php
 
-/**
- * This file is part of the base-controller-bundle.
- */
-
 namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Doctrine\ORM\QueryBuilder;

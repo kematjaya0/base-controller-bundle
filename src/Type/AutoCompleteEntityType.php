@@ -1,10 +1,5 @@
 <?php
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/PHPClass.php to edit this template
- */
-
 namespace Kematjaya\BaseControllerBundle\Type;
 
 use Symfony\Component\Form\FormView;
@@ -23,7 +18,7 @@ use Kematjaya\HiddenTypeBundle\DataTransformer\Transformer;
  *
  * @author programmer
  */
-class AutoCompleteEntityType extends AbstractType 
+class AutoCompleteEntityType extends AbstractType
 {
     
     /**

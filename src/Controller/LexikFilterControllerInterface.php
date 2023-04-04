@@ -1,10 +1,5 @@
 <?php
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/PHPInterface.php to edit this template
- */
-
 namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
@@ -13,7 +8,7 @@ use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
  *
  * @author apple
  */
-interface LexikFilterControllerInterface 
+interface LexikFilterControllerInterface
 {
     const TAGGING_NAME = "controller.lexik_filter_arguments";
     
