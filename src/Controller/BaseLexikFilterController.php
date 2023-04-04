@@ -105,6 +105,14 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
         return $form;
     }
     
+    
+    protected function updateFilter(Request $request, FormInterface $form):?array
+    {
+        $this->setFilters($request, $form);
+        
+        return $this->getFilters($form->getName());
+    }
+    
     /**
      * get filter value
      * @param string $name

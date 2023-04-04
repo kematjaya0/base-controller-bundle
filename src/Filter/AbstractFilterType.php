@@ -1,9 +1,5 @@
 <?php
 
-/**
- * This file is part of the base-controller-bundle.
- */
-
 namespace Kematjaya\BaseControllerBundle\Filter;
 
 use Symfony\Component\Form\AbstractType;
@@ -33,7 +29,7 @@ abstract class AbstractFilterType extends AbstractType
     {
         $resolver->setDefaults(array(
             'csrf_protection'   => true,
-            'validation_groups' => array('filtering') 
+            'validation_groups' => array('filtering')
         ));
     }
 }

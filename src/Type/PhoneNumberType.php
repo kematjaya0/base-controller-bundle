@@ -1,9 +1,5 @@
 <?php
 
-/**
- * This file is part of the BaseControllerBundle.
- */
-
 namespace Kematjaya\BaseControllerBundle\Type;
 
 use Symfony\Component\Form\FormInterface;
@@ -36,7 +32,7 @@ class PhoneNumberType extends AbstractType
      */
     protected $errors;
     
-    public function __construct() 
+    public function __construct()
     {
         $this->phoneUtil = PhoneNumberUtil::getInstance();
     }
@@ -55,6 +51,10 @@ class PhoneNumberType extends AbstractType
                 
                 return trim(str_replace($prefix, "", $value));
             }, function ($value) use ($options) {
+                if (null === $value) {
+                    return null;
+                }
+                
                 $value = trim(str_replace("-", "", str_replace($this->getPhonePrefix($options['region']), "", $value)));
                 $value = $this->getPhonePrefix($options['region']) . preg_replace("/[a-z]/i", "", $value);
                 try {
