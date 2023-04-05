@@ -11,8 +11,8 @@
         }
     </style>
     <input type="hidden" name="{{ full_name }}" id="{{ id }}" value="{{ data }}"/>
-    <input type="text" id="auto_complete_{{ name }}" value="{{ label_data }}" {{ html_attributes|raw }} />
-    <div id="icon-container-{{ name }}" style="display: none">
+    <input type="text" id="auto_complete_{{ id }}" value="{{ label_data }}" {{ html_attributes|raw }} />
+    <div id="icon-container-{{ id }}" style="display: none">
       <img class="loader" src="{{ asset('bundles/basecontroller/images/loading.gif') }}"></i>
     </div>
     {{- block('auto_complete_javascript') -}}
@@ -21,25 +21,26 @@
 
 {% block auto_complete_javascript %}
     <script>
-    function dispatchEvent{{ name|title }}() {
+    function dispatchEvent{{ id|title }}() {
         el = document.getElementById('{{ id }}');
         ev = document.createEvent('Event');
         ev.initEvent('change', true, false);
         el.dispatchEvent(ev);
     }
     
-    $(function () {
+    function init_auto_complete_{{ id }}()
+    {
         var {{ name }} = [];
         var parentDOM = null;
         if ($(".modal").length > 0) {
-            parentDOM = ($(".modal").find('#auto_complete_{{ name }}').length > 0) ? "#" + $(".modal").attr("id") : null;
+            parentDOM = ($(".modal").find('#auto_complete_{{ id }}').length > 0) ? "#" + $(".modal").attr("id") : null;
         }
         
-        $('#auto_complete_{{ name }}').autocomplete({
+        $('#auto_complete_{{ id }}').autocomplete({
             change: function (event, ui) {
                 if (this.value.length <= 0) {
                     $("#{{ id }}").val(null);
-                    dispatchEvent{{ name|title }}();
+                    dispatchEvent{{ id|title }}();
                     return;
                 }
                 
@@ -50,22 +51,22 @@
                 
                 if (selected.length <= 0) {
                     $("#{{ id }}").val(null);
-                    dispatchEvent{{ name|title }}();
+                    dispatchEvent{{ id|title }}();
                     return;
                 }
                 
                 $("#{{ id }}").val(selected[0].id);
-                dispatchEvent{{ name|title }}();
+                dispatchEvent{{ id|title }}();
             },
             source: function (request, response) {
                 let dom = $(this.element[0]);
-                $("#icon-container-{{ name }}").attr("style", "display: contents");
+                $("#icon-container-{{ id }}").attr("style", "display: contents");
                 $.ajax({
                     url: '{{ url }}',
                     data: { query: request.term },
                     success: function (data) {
                         {{ name }} = data;
-                        $("#icon-container-{{ name }}").attr("style", "display: none");
+                        $("#icon-container-{{ id }}").attr("style", "display: none");
                         response(data);
                     },
                     error: function () {
@@ -75,6 +76,10 @@
             },
             appendTo: parentDOM
         });
+    }
+    
+    $(function () {
+        init_auto_complete_{{ id }}();
     });
         
     </script>
