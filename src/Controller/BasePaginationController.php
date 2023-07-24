@@ -19,17 +19,23 @@ abstract class BasePaginationController extends BaseController implements Pagina
      * @var PaginatorInterface
      */
     protected $paginator;
-    
+
+    /**
+     * @var string
+     */
+    protected $name;
+
     /**
      * @var int
      */
     protected $limit = 20;
-    
+
     public function setPaginator(PaginatorInterface $paginator):void
     {
+        $this->name = strtolower(str_replace("\\", "_", get_class($this)));
         $this->paginator = $paginator;
     }
-    
+
     /**
      * create Paginator object
      * @param QueryBuilder $queryBuilder
@@ -40,13 +46,13 @@ abstract class BasePaginationController extends BaseController implements Pagina
     {
         return $this->getPaginator()->paginate(
             $queryBuilder,
-            $request->query->getInt('page', 1),
+            $this->getPage($request),
             $this->processLimit($request)
         );
     }
-    
+
     /**
-     * 
+     *
      * @param array $data
      * @param Request $request
      * @return SlidingPaginationInterface
@@ -54,14 +60,14 @@ abstract class BasePaginationController extends BaseController implements Pagina
     protected function createArrayPaginator(array $data = [], Request $request): SlidingPaginationInterface
     {
         return $this->getPaginator()->paginate(
-            $data, 
-            $request->query->getInt('page', 1), 
+            $data,
+            $this->getPage($request),
             $this->processLimit($request)
         );
     }
-    
+
     /**
-     * 
+     *
      * @param Request $request
      * @return int
      */
@@ -71,11 +77,28 @@ abstract class BasePaginationController extends BaseController implements Pagina
         if (null !== $limit) {
             $request->getSession()->set('limit', $limit);
         }
-        
+
         return $request->getSession()->get("limit", $this->limit);
     }
 
-    public function getPaginator(): PaginatorInterface 
+    protected function getPage(Request $request):int
+    {
+        if (!$request->query->has("page")) {
+            $page = $this->get('session')->get($this->name);
+            if (null === $page) {
+                $this->get('session')->set($this->name, 1);
+                $page = $this->get('session')->get($this->name);
+            }
+
+            return $page;
+        }
+
+        $this->get('session')->set($this->name, $request->query->getInt("page"));
+
+        return $this->get('session')->get($this->name);
+    }
+
+    public function getPaginator(): PaginatorInterface
     {
         return $this->paginator;
     }
