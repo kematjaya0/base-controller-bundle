@@ -44,7 +44,11 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
     protected function buildFilter(Request $request, FormInterface &$form, QueryBuilder $queryBuilder): QueryBuilder 
     {
         $this->setFilters($request, $form);
-        
+        if (null === $form->getData()) {
+
+            return $queryBuilder;
+        }
+
         return $this->getFilterBuilderUpdater()->addFilterConditions($form, $queryBuilder);
     }
     
@@ -82,13 +86,17 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
      */
     protected function setFilters(Request $request, FormInterface &$form)
     {
-        if ($request->query->get('_reset') and Request::METHOD_GET === $request->getMethod()) {
-            $type = get_class($form->getConfig()->getType()->getInnerType());
-            $options = $form->getConfig()->getOptions();
-            $options['data'] = null;
-            $form = parent::createForm($type, null, $options);
-            $this->resetFilters($form);
-            
+        if (Request::METHOD_GET === $request->getMethod()) {
+            if ($request->query->get('_reset')) {
+                $type = get_class($form->getConfig()->getType()->getInnerType());
+                $options = $form->getConfig()->getOptions();
+                $options['data'] = null;
+                $form = parent::createForm($type, null, $options);
+                $this->resetFilters($form);
+
+                return $form;
+            }
+
             return $form;
         }
         

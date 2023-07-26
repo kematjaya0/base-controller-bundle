@@ -32,7 +32,7 @@ abstract class BasePaginationController extends BaseController implements Pagina
 
     public function setPaginator(PaginatorInterface $paginator):void
     {
-        $this->name = strtolower(str_replace("\\", "_", get_class($this)));
+        $this->name = "pagination_".strtolower(str_replace("\\", "_", get_class($this)));
         $this->paginator = $paginator;
     }
 
