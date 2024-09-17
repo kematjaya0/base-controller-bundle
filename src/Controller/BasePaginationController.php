@@ -83,6 +83,10 @@ abstract class BasePaginationController extends BaseController implements Pagina
 
     protected function getPage(Request $request):int
     {
+        if (Request::METHOD_POST === $request->getMethod()) {
+            return 1;
+        }
+
         if (!$request->query->has("page")) {
             $page = $this->get('session')->get($this->name);
             if (null === $page) {
