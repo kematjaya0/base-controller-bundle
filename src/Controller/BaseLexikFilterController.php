@@ -86,6 +86,7 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
      */
     protected function setFilters(Request $request, FormInterface &$form)
     {
+        $this->get('session')->set($this->name, 1);
         if (Request::METHOD_GET === $request->getMethod()) {
             if ($request->query->get('_reset')) {
                 $type = get_class($form->getConfig()->getType()->getInnerType());
