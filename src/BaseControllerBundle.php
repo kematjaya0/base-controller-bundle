@@ -2,6 +2,8 @@
 
 namespace Kematjaya\BaseControllerBundle;
 
+use Kematjaya\BaseControllerBundle\Controller\DoctrineManagerRegistryControllerInterface;
+use Kematjaya\BaseControllerBundle\Controller\SessionControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\TwigControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\LexikFilterControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\PaginationControllerInterface;
@@ -19,6 +21,12 @@ class BaseControllerBundle extends Bundle
     {
         $container->registerForAutoconfiguration(TwigControllerInterface::class)
             ->addTag("controller.twig_arguments");
+
+        $container->registerForAutoconfiguration(SessionControllerInterface::class)
+            ->addTag(SessionControllerInterface::SESSION_TAGGING_NAME);
+
+        $container->registerForAutoconfiguration(DoctrineManagerRegistryControllerInterface::class)
+            ->addTag(DoctrineManagerRegistryControllerInterface::DOCTRINE_TAGGING_NAME);
 
         $container->registerForAutoconfiguration(TranslatorControllerInterface::class)
             ->addTag(TranslatorControllerInterface::CONTROLLER_TAG_NAME);

@@ -45,7 +45,7 @@ abstract class BasePaginationController extends BaseController implements Pagina
      * @param Request $request
      * @return PaginationInterface
      */
-    protected function createArrayPaginator(array $data = [], Request $request): PaginationInterface
+    protected function createArrayPaginator(array $data = [], Request $request = null): PaginationInterface
     {
         return $this->getPaginator()->paginate(
             $data,
@@ -76,18 +76,18 @@ abstract class BasePaginationController extends BaseController implements Pagina
         }
 
         if (!$request->query->has("page")) {
-            $page = $this->get('session')->get($this->name);
+            $page = $this->getSession()->get($this->name);
             if (null === $page) {
-                $this->get('session')->set($this->name, 1);
-                $page = $this->get('session')->get($this->name);
+                $this->getSession()->set($this->name, 1);
+                $page = $this->getSession()->get($this->name);
             }
 
             return $page;
         }
 
-        $this->get('session')->set($this->name, $request->query->getInt("page"));
+        $this->getSession()->set($this->name, $request->query->getInt("page"));
 
-        return $this->get('session')->get($this->name);
+        return $this->getSession()->get($this->name);
     }
 
     public function getPaginator(): PaginatorInterface

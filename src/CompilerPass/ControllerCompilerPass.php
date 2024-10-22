@@ -1,12 +1,9 @@
 <?php
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/PHPClass.php to edit this template
- */
-
 namespace Kematjaya\BaseControllerBundle\CompilerPass;
 
+use Kematjaya\BaseControllerBundle\Controller\DoctrineManagerRegistryControllerInterface;
+use Kematjaya\BaseControllerBundle\Controller\SessionControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\LexikFilterControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\PaginationControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\TranslatorControllerInterface;
@@ -25,6 +22,16 @@ class ControllerCompilerPass implements CompilerPassInterface
         $translatorServices = $container->findTaggedServiceIds(TranslatorControllerInterface::CONTROLLER_TAG_NAME);
         foreach (array_keys($translatorServices) as $className) {
             $container->findDefinition($className)->addMethodCall("setTranslator");
+        }
+
+        $sessionServices = $container->findTaggedServiceIds(SessionControllerInterface::SESSION_TAGGING_NAME);
+        foreach (array_keys($sessionServices) as $className) {
+            $container->findDefinition($className)->addMethodCall("setRequestStack");
+        }
+
+        $doctrineServices = $container->findTaggedServiceIds(DoctrineManagerRegistryControllerInterface::DOCTRINE_TAGGING_NAME);
+        foreach (array_keys($doctrineServices) as $className) {
+            $container->findDefinition($className)->addMethodCall("setManagerRegistry");
         }
 
         $twigServices = $container->findTaggedServiceIds("controller.twig_arguments");

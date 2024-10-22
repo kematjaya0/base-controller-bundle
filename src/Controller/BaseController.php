@@ -3,6 +3,8 @@
 namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -14,15 +16,12 @@ use Twig\Environment;
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
-abstract class BaseController extends AbstractController implements TwigControllerInterface, TranslatorControllerInterface
+abstract class BaseController extends AbstractController implements TwigControllerInterface, TranslatorControllerInterface, SessionControllerInterface, DoctrineManagerRegistryControllerInterface
 {
+    private SessionInterface $session;
     protected TranslatorInterface $translator;
     private Environment $twig;
     private ManagerRegistry $managerRegistry;
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
 
     public function setTranslator(TranslatorInterface $translator): void
     {
@@ -42,6 +41,16 @@ abstract class BaseController extends AbstractController implements TwigControll
     public function getTwig(): Environment
     {
         return $this->twig;
+    }
+
+    public function setRequestStack(RequestStack $requestStack):void
+    {
+        $this->session = $requestStack->getSession();
+    }
+
+    public function getSession():SessionInterface
+    {
+        return $this->session;
     }
 
     /**
@@ -229,7 +238,12 @@ abstract class BaseController extends AbstractController implements TwigControll
         }
     }
 
-    protected function getDoctrine():ManagerRegistry
+    public function setManagerRegistry(ManagerRegistry $managerRegistry):void
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
+
+    public function getDoctrine():ManagerRegistry
     {
         return $this->managerRegistry;
     }
