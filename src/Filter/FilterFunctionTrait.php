@@ -1,12 +1,8 @@
 <?php
 
-/**
- * This file is part of the base-controller-bundle.
- */
-
 namespace Kematjaya\BaseControllerBundle\Filter;
 
-use Lexik\Bundle\FormFilterBundle\Filter\Query\QueryInterface;
+use Spiriit\Bundle\FormFilterBundle\Filter\Query\QueryInterface;
 
 /**
  * @package Kematjaya\BaseControllerBundle\Filter

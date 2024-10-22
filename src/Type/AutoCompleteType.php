@@ -12,16 +12,16 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 class AutoCompleteType extends AbstractType
 {
     /**
-     * 
+     *
      * @return string
      */
     public function getParent()
     {
         return TextType::class;
     }
-    
+
     public function configureOptions(OptionsResolver $resolver)
-    {   
+    {
         parent::configureOptions($resolver);
         $resolver->setRequired(['url', "dom_parent"]);
         $resolver->addNormalizer('attr', function (Options $options) {
@@ -29,22 +29,22 @@ class AutoCompleteType extends AbstractType
                 'class' => 'autocomplete form-control', 'url' => $options['url']
             ];
         });
-        
-        
+
+
         $resolver->setDefaults([
             "dom_parent" => null
         ]);
     }
-    
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);
-        
+
         $attr = $view->vars["attr"];
         $view->vars["html_attributes"] = join(" ", array_map(function ($key) use ($attr) {
             return sprintf('%s="%s"', $key, $attr[$key]);
         }, array_keys($attr)));
-        
+
         $view->vars["appendTo"] = $options["dom_parent"];
     }
 }

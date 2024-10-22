@@ -23,73 +23,73 @@ use libphonenumber\PhoneNumberFormat;
  */
 class PhoneNumberType extends AbstractType
 {
-    
+
     protected $phoneUtil;
-    
+
     /**
-     * 
+     *
      * @var string
      */
     protected $errors;
-    
+
     public function __construct()
     {
         $this->phoneUtil = PhoneNumberUtil::getInstance();
     }
-    
+
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer(new CallbackTransformer(function ($value) use ($options) {
-                if (null === $value) {
-                    return $value;
-                }
-                
-                $prefix = $this->getPhonePrefix($options['region']);
-                
-                return trim(str_replace($prefix, "", $value));
-            }, function ($value) use ($options) {
-                if (null === $value) {
-                    return null;
-                }
-                
-                $value = trim(str_replace("-", "", str_replace($this->getPhonePrefix($options['region']), "", $value)));
-                $value = $this->getPhonePrefix($options['region']) . preg_replace("/[a-z]/i", "", $value);
-                try {
-                    $phoneNumber = $this->phoneUtil->parse(trim($value), $options['region']);
-                } catch (\Exception $ex) {
-                    $this->errors = $ex->getMessage();
-                    
-                    return null;
-                }
-                
-                if (!$this->phoneUtil->isValidNumber($phoneNumber)) {
-                    $ex = $this->phoneUtil->getExampleNumber($options['region']);
-                    $this->errors = sprintf("please insert a valid number, e.g: %s", $this->phoneUtil->format($ex, PhoneNumberFormat::INTERNATIONAL));
-                    
-                    return null;
-                }
+            if (null === $value) {
+                return $value;
+            }
 
-                return $this->phoneUtil->format($phoneNumber, PhoneNumberFormat::INTERNATIONAL);
-            }));
-            
+            $prefix = $this->getPhonePrefix($options['region']);
+
+            return trim(str_replace($prefix, "", $value));
+        }, function ($value) use ($options) {
+            if (null === $value) {
+                return null;
+            }
+
+            $value = trim(str_replace("-", "", str_replace($this->getPhonePrefix($options['region']), "", $value)));
+            $value = $this->getPhonePrefix($options['region']) . preg_replace("/[a-z]/i", "", $value);
+            try {
+                $phoneNumber = $this->phoneUtil->parse(trim($value), $options['region']);
+            } catch (\Exception $ex) {
+                $this->errors = $ex->getMessage();
+
+                return null;
+            }
+
+            if (!$this->phoneUtil->isValidNumber($phoneNumber)) {
+                $ex = $this->phoneUtil->getExampleNumber($options['region']);
+                $this->errors = sprintf("please insert a valid number, e.g: %s", $this->phoneUtil->format($ex, PhoneNumberFormat::INTERNATIONAL));
+
+                return null;
+            }
+
+            return $this->phoneUtil->format($phoneNumber, PhoneNumberFormat::INTERNATIONAL);
+        }));
+
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             if (null !== $this->errors) {
                 $event->getForm()
-                        ->addError(new FormError($this->errors));
-                
+                    ->addError(new FormError($this->errors));
+
                 return;
             }
         });
     }
-    
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['phone_prefix'] = $this->getPhonePrefix($options['region']);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -105,7 +105,7 @@ class PhoneNumberType extends AbstractType
             },
         ]);
     }
-    
+
     /**
      * {@inheritdoc}
      * @return string Description
@@ -124,7 +124,7 @@ class PhoneNumberType extends AbstractType
         return 'phone';
     }
 
-    protected function getPhonePrefix(string $region):string
+    protected function getPhonePrefix(string $region): string
     {
         return sprintf("%s%s", PhoneNumberUtil::PLUS_SIGN, $this->phoneUtil->getCountryCodeForRegion($region));
     }

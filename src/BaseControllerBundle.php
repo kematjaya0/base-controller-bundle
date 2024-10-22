@@ -15,22 +15,22 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class BaseControllerBundle extends Bundle
 {
-    public function build(ContainerBuilder $container) 
+    public function build(ContainerBuilder $container)
     {
         $container->registerForAutoconfiguration(TwigControllerInterface::class)
-                ->addTag("controller.twig_arguments");
-        
+            ->addTag("controller.twig_arguments");
+
         $container->registerForAutoconfiguration(TranslatorControllerInterface::class)
-                ->addTag(TranslatorControllerInterface::CONTROLLER_TAG_NAME);
-        
+            ->addTag(TranslatorControllerInterface::CONTROLLER_TAG_NAME);
+
         $container->registerForAutoconfiguration(PaginationControllerInterface::class)
-                ->addTag(PaginationControllerInterface::CONST_TAG_NAME);
-        
+            ->addTag(PaginationControllerInterface::CONST_TAG_NAME);
+
         $container->registerForAutoconfiguration(LexikFilterControllerInterface::class)
-                ->addTag(LexikFilterControllerInterface::TAGGING_NAME);
-        
+            ->addTag(LexikFilterControllerInterface::TAGGING_NAME);
+
         $container->addCompilerPass(new ControllerCompilerPass());
-        
+
         parent::build($container);
     }
 }

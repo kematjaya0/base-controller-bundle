@@ -21,24 +21,24 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
-        "symfony/var-dumper": "^4.0|^5.0",
-        "symfony/dom-crawler": "^4.0|^5.0"
+        "symfony/var-dumper": "^6.0|^7.0",
+        "symfony/dom-crawler": "^6.0|^7.0"
     },
     "require": {
-        "doctrine/orm": "^2.7|^3.0",
-        "doctrine/persistence": "^2.0|^3.0",
-        "symfony/http-kernel": "^4.0|^5.0",
-        "symfony/dependency-injection": "^4.0|^5.0",
-        "symfony/form": "^4.0|^5.0",
-        "symfony/config": "^4.0|^5.0",
-        "symfony/http-foundation": "^4.0|^5.0",
-        "symfony/framework-bundle": "^4.0|^5.0",
-        "symfony/translation-contracts": "^2.3",
-        "lexik/form-filter-bundle": "^6.0|^7.0",
-        "knplabs/knp-paginator-bundle": "^5.3",
-        "haydenpierce/class-finder": "^0.4",
+        "doctrine/orm": "^2.10|^3.3",
+        "doctrine/persistence": "^3.3",
+        "symfony/http-kernel": "^6.0|^7.0",
+        "symfony/dependency-injection": "^6.0|^7.0",
+        "symfony/form": "^6.0|^7.0",
+        "symfony/config": "^6.0|^7.0",
+        "symfony/http-foundation": "^6.0|^7.0",
+        "symfony/framework-bundle": "^6.0|^7.0",
+        "symfony/translation-contracts": "^3.5",
+        "knplabs/knp-paginator-bundle": "^6.6",
+        "haydenpierce/class-finder": "^0.5",
         "giggsey/libphonenumber-for-php": "^8.12",
-        "symfony/property-access": "^5.0",
-        "kematjaya/hidden-type-bundle": "^1.1"
+        "symfony/property-access": "^7.0",
+        "kematjaya/hidden-type-bundle": "^7.0",
+        "spiriitlabs/form-filter-bundle": "^10.0"
     }
 }

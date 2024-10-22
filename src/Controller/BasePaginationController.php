@@ -3,7 +3,7 @@
 namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Doctrine\ORM\QueryBuilder;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPaginationInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -14,25 +14,13 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class BasePaginationController extends BaseController implements PaginationControllerInterface
 {
-    /**
-     *
-     * @var PaginatorInterface
-     */
-    protected $paginator;
+    protected PaginatorInterface $paginator;
+    protected string $name;
+    protected int $limit = 20;
 
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var int
-     */
-    protected $limit = 20;
-
-    public function setPaginator(PaginatorInterface $paginator):void
+    public function setPaginator(PaginatorInterface $paginator): void
     {
-        $this->name = "pagination_".strtolower(str_replace("\\", "_", get_class($this)));
+        $this->name = "pagination_" . strtolower(str_replace("\\", "_", get_class($this)));
         $this->paginator = $paginator;
     }
 
@@ -40,9 +28,9 @@ abstract class BasePaginationController extends BaseController implements Pagina
      * create Paginator object
      * @param QueryBuilder $queryBuilder
      * @param Request $request
-     * @return SlidingPaginationInterface
+     * @return PaginationInterface
      */
-    protected function createPaginator(QueryBuilder $queryBuilder, Request $request): SlidingPaginationInterface
+    protected function createPaginator(QueryBuilder $queryBuilder, Request $request): PaginationInterface
     {
         return $this->getPaginator()->paginate(
             $queryBuilder,
@@ -55,9 +43,9 @@ abstract class BasePaginationController extends BaseController implements Pagina
      *
      * @param array $data
      * @param Request $request
-     * @return SlidingPaginationInterface
+     * @return PaginationInterface
      */
-    protected function createArrayPaginator(array $data = [], Request $request): SlidingPaginationInterface
+    protected function createArrayPaginator(array $data = [], Request $request): PaginationInterface
     {
         return $this->getPaginator()->paginate(
             $data,
@@ -71,9 +59,9 @@ abstract class BasePaginationController extends BaseController implements Pagina
      * @param Request $request
      * @return int
      */
-    protected function processLimit(Request $request):int
+    protected function processLimit(Request $request): int
     {
-        $limit = is_numeric($request->get('_limit')) ? (int) $request->get('_limit') : null;
+        $limit = is_numeric($request->get('_limit')) ? (int)$request->get('_limit') : null;
         if (null !== $limit) {
             $request->getSession()->set('limit', $limit);
         }
@@ -81,7 +69,7 @@ abstract class BasePaginationController extends BaseController implements Pagina
         return $request->getSession()->get("limit", $this->limit);
     }
 
-    protected function getPage(Request $request):int
+    protected function getPage(Request $request): int
     {
         if (Request::METHOD_POST === $request->getMethod()) {
             return 1;

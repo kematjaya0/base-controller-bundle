@@ -4,10 +4,11 @@ namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Proxy\Proxy;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
-
+use Spiriit\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @package Kematjaya\BaseControllerBundle\Controller
@@ -16,24 +17,25 @@ use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
  */
 abstract class BaseLexikFilterController extends BasePaginationController implements LexikFilterControllerInterface
 {
-    
-    /**
-     * 
-     * @var FilterBuilderUpdaterInterface
-     */
-    protected $filterBuilderUpdater;
-    
-    public function setFilterBuilderUpdater(FilterBuilderUpdaterInterface $filterBuilderUpdater):void
+    protected FilterBuilderUpdaterInterface $filterBuilderUpdater;
+    protected SessionInterface $session;
+    public function __construct(ManagerRegistry $managerRegistry, SessionInterface $session)
+    {
+        $this->session = $session;
+        parent::__construct($managerRegistry);
+    }
+
+    public function setFilterBuilderUpdater(FilterBuilderUpdaterInterface $filterBuilderUpdater): void
     {
         $this->filterBuilderUpdater = $filterBuilderUpdater;
     }
-    
-    public function getFilterBuilderUpdater():FilterBuilderUpdaterInterface
+
+    public function getFilterBuilderUpdater(): FilterBuilderUpdaterInterface
     {
         return $this->filterBuilderUpdater;
     }
-    
-    
+
+
     /**
      * Process form with QueryBuilder object
      * @param Request $request
@@ -41,7 +43,7 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
      * @param QueryBuilder $queryBuilder
      * @return QueryBuilder
      */
-    protected function buildFilter(Request $request, FormInterface &$form, QueryBuilder $queryBuilder): QueryBuilder 
+    protected function buildFilter(Request $request, FormInterface &$form, QueryBuilder $queryBuilder): QueryBuilder
     {
         $this->setFilters($request, $form);
         if (null === $form->getData()) {
@@ -51,7 +53,7 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
 
         return $this->getFilterBuilderUpdater()->addFilterConditions($form, $queryBuilder);
     }
-    
+
     /**
      * Creating filter form object
      * @param string $type
@@ -59,26 +61,26 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
      * @param array $options
      * @return FormInterface
      */
-    protected function createFormFilter(string $type, array $options = array()): FormInterface 
+    protected function createFormFilter(string $type, array $options = array()): FormInterface
     {
         $reflection = new \ReflectionClass($type);
         $name = sprintf("%s", strtolower($reflection->getShortName()));
         $data = $this->getFilters($name);
         $form = parent::createForm($type, $data, $options);
-        
+
         return $form;
     }
-    
+
     /**
      * Reset filter value
-     * 
+     *
      * @param FormInterface $form
      */
-    protected function resetFilters(FormInterface $form):void
+    protected function resetFilters(FormInterface $form): void
     {
-        $this->get('session')->set($form->getName(), null);
+        $this->session->set($form->getName(), null);
     }
-    
+
     /**
      * Set filter value
      * @param Request $request
@@ -86,7 +88,7 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
      */
     protected function setFilters(Request $request, FormInterface &$form)
     {
-        $this->get('session')->set($this->name, 1);
+        $this->session->set($this->name, 1);
         if (Request::METHOD_GET === $request->getMethod()) {
             if ($request->query->get('_reset')) {
                 $type = get_class($form->getConfig()->getType()->getInnerType());
@@ -100,39 +102,39 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
 
             return $form;
         }
-        
+
         $filters = $request->get($form->getName());
         if ($filters) {
             $form->submit($filters);
-            $this->get('session')->set($form->getName(), $form->getData());
+            $this->session->set($form->getName(), $form->getData());
         }
-        
+
         return $form;
     }
-    
-    
-    protected function updateFilter(Request $request, FormInterface $form):?array
+
+
+    protected function updateFilter(Request $request, FormInterface $form): ?array
     {
         $this->setFilters($request, $form);
-        
+
         return $this->getFilters($form->getName());
     }
-    
+
     /**
      * get filter value
      * @param string $name
-     * @return array|null 
+     * @return array|null
      */
     protected function getFilters(string $name)
     {
-        $filters = $this->get('session')->get($name, null);
+        $filters = $this->session->get($name, null);
         if (!is_array($filters)) {
-            
+
             return null;
         }
-        
-        foreach($filters as $k => $v)  {
-            if (!is_object ($v)) {
+
+        foreach ($filters as $k => $v) {
+            if (!is_object($v)) {
                 continue;
             }
 
@@ -141,7 +143,7 @@ abstract class BaseLexikFilterController extends BasePaginationController implem
                 $filters[$k] = $manager->getRepository(get_class($v))->find($v->getId());
             }
         }
-        
+
         return $filters;
     }
 }

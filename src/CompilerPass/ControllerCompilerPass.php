@@ -20,23 +20,23 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ControllerCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container):void 
+    public function process(ContainerBuilder $container): void
     {
         $translatorServices = $container->findTaggedServiceIds(TranslatorControllerInterface::CONTROLLER_TAG_NAME);
         foreach (array_keys($translatorServices) as $className) {
             $container->findDefinition($className)->addMethodCall("setTranslator");
         }
-        
+
         $twigServices = $container->findTaggedServiceIds("controller.twig_arguments");
         foreach (array_keys($twigServices) as $className) {
             $container->findDefinition($className)->addMethodCall("setTwig");
         }
-        
+
         $paginatorServices = $container->findTaggedServiceIds(PaginationControllerInterface::CONST_TAG_NAME);
         foreach (array_keys($paginatorServices) as $className) {
             $container->findDefinition($className)->addMethodCall("setPaginator");
         }
-        
+
         $filterServices = $container->findTaggedServiceIds(LexikFilterControllerInterface::TAGGING_NAME);
         foreach (array_keys($filterServices) as $className) {
             $container->findDefinition($className)->addMethodCall("setFilterBuilderUpdater");

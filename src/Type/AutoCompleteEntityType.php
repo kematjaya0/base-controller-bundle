@@ -20,49 +20,41 @@ use Kematjaya\HiddenTypeBundle\DataTransformer\Transformer;
  */
 class AutoCompleteEntityType extends AbstractType
 {
-    
-    /**
-     * 
-     * @var ManagerRegistry
-     */
-    private $registry;
-    
-    /**
-     * 
-     * @var Transformer
-     */
-    private $transformer;
-    
+
+    private ManagerRegistry $registry;
+
+    private Transformer $transformer;
+
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
-    
+
     /**
-     * 
+     *
      * @return ?string
      */
     public function getParent()
     {
         return TextType::class;
     }
-    
+
     public function configureOptions(OptionsResolver $resolver)
-    {   
+    {
         parent::configureOptions($resolver);
         $resolver->setRequired(['url', "class", 'property_label']);
-        
+
         $resolver->setDefaults([
-            'property'   => 'id'
+            'property' => 'id'
         ]);
-        
+
         $resolver->setAllowedTypes('property', ['null', 'string']);
         $resolver->setAllowedTypes('property_label', ['string']);
     }
-    
+
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->transformer = new ObjectToIdTransformer(
@@ -70,44 +62,43 @@ class AutoCompleteEntityType extends AbstractType
             $options['class'],
             $options['property']
         );
-        
+
         $builder->addModelTransformer($this->transformer);
     }
-    
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);
-        
+
         $view->vars["attr"]["class"] = $view->vars["attr"]["class"] ?? "autocomplete form-control";
         $view->vars["url"] = $options["url"];
         $attr = $view->vars["attr"];
         $view->vars["html_attributes"] = join(" ", array_map(function ($key) use ($attr) {
             return sprintf('%s="%s"', $key, $attr[$key]);
         }, array_keys($attr)));
-        
-        
-        
+
+
         $view->vars["label_data"] = $this->getLabelData($view, $options);
-        
+
     }
-    
-    protected function getLabelData(FormView $view, array $options):?string
+
+    protected function getLabelData(FormView $view, array $options): ?string
     {
         if (null == $view->vars["data"]) {
-            
+
             return null;
         }
-        
+
         $entity = $this->transformer->reverseTransform($view->vars["data"]);
         if (null === $entity) {
             return null;
         }
-        
+
         $accessor = PropertyAccess::createPropertyAccessor();
-        if (! $accessor->isReadable($entity, $options['property_label'])) {
+        if (!$accessor->isReadable($entity, $options['property_label'])) {
             return null;
         }
-        
+
         return $accessor->getValue($entity, $options['property_label']);
     }
 }

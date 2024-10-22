@@ -2,8 +2,7 @@
 
 namespace Kematjaya\BaseControllerBundle\Controller;
 
-use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
-
+use Spiriit\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 /**
  *
  * @author apple

@@ -2,6 +2,7 @@
 
 namespace Kematjaya\BaseControllerBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -15,40 +16,36 @@ use Twig\Environment;
  */
 abstract class BaseController extends AbstractController implements TwigControllerInterface, TranslatorControllerInterface
 {
-    /**
-     *
-     * @var TranslatorInterface
-     */
-    protected $translator;
-    
-    /**
-     * 
-     * @var Environment
-     */
-    private $twig;
-    
-    public function setTranslator(TranslatorInterface $translator):void
+    protected TranslatorInterface $translator;
+    private Environment $twig;
+    private ManagerRegistry $managerRegistry;
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
+
+    public function setTranslator(TranslatorInterface $translator): void
     {
         $this->translator = $translator;
     }
-    
-    public function getTranslator():TranslatorInterface
+
+    public function getTranslator(): TranslatorInterface
     {
         return $this->translator;
     }
-    
-    public function setTwig(Environment $twig):void
+
+    public function setTwig(Environment $twig): void
     {
         $this->twig = $twig;
     }
-    
-    public function getTwig():Environment
+
+    public function getTwig(): Environment
     {
         return $this->twig;
     }
-    
+
     /**
-     * 
+     *
      * @param string $view
      * @param array $parameters
      * @return string
@@ -57,7 +54,7 @@ abstract class BaseController extends AbstractController implements TwigControll
     {
         return $this->getTwig()->render($view, $parameters);
     }
-    
+
     /**
      * Streams a view.
      */
@@ -81,44 +78,44 @@ abstract class BaseController extends AbstractController implements TwigControll
 
         return $response;
     }
-    
+
     protected function buildSuccessResult(string $type, $object)
     {
         return [
-            "process" => true, 
-            "status" => true, 
-            "message" => $this->getTranslator()->trans('messages.'.$type.'.success'), 
+            "process" => true,
+            "status" => true,
+            "message" => $this->getTranslator()->trans('messages.' . $type . '.success'),
             "errors" => null
         ];
     }
-    
+
     protected function buildErrorResult(string $type, string $message)
     {
         return [
-            "process" => true, 
-            "status" => false, 
-            "message" => $this->getTranslator()->trans('messages.'.$type.'.error'), 
+            "process" => true,
+            "status" => false,
+            "message" => $this->getTranslator()->trans('messages.' . $type . '.error'),
             "errors" => $message
         ];
     }
-    
-    protected function processFormAjax(Request $request, FormInterface $form):array
+
+    protected function processFormAjax(Request $request, FormInterface $form): array
     {
         $form->handleRequest($request);
-        
+
         if (!$form->isSubmitted()) {
-            
+
             return ["process" => false];
         }
-        
+
         $type = 'add';
         if (!$form->isValid()) {
-            
+
             $errors = $this->getErrorsFromForm($form);
 
             return $this->buildErrorResult($type, implode(", ", $errors));
         }
-        
+
         $manager = $this->getDoctrine()->getManager();
         try {
 
@@ -130,30 +127,30 @@ abstract class BaseController extends AbstractController implements TwigControll
             return $this->buildErrorResult($type, $ex->getMessage());
         }
     }
-    
+
     protected function saveObject($object, EntityManagerInterface $manager)
     {
-        $manager->transactional(function (EntityManagerInterface $em) use ($object) {
+        $manager->wrapInTransaction(function (EntityManagerInterface $em) use ($object) {
             $em->persist($object);
         });
-        
+
         return $object;
     }
-    
+
     protected function processForm(Request $request, FormInterface $form, $func = null)
     {
         $form->handleRequest($request);
         if (!$form->isSubmitted()) {
-            
+
             return false;
         }
-        
+
         if (!$form->isValid()) {
             $this->addFlash("error", implode(', ', $this->getErrorsFromForm($form)));
-            
+
             return false;
         }
-        
+
         $manager = $this->getDoctrine()->getManager();
         try {
             $object = $this->saveObject($form->getData(), $manager);
@@ -164,71 +161,76 @@ abstract class BaseController extends AbstractController implements TwigControll
         } catch (\Exception $ex) {
             $this->addFlash("error", $this->getErrorMessage($ex));
         }
-        
+
         return false;
     }
-    
-    protected function getSuccessMessage($object):string
+
+    protected function getSuccessMessage($object): string
     {
         return $this->getTranslator()->trans('successfull_save');
     }
-    
-    protected function getErrorMessage(\Exception $ex):string
+
+    protected function getErrorMessage(\Exception $ex): string
     {
         return $ex->getMessage();
     }
-    
-    protected function getErrorsFromForm(FormInterface $form):array
+
+    protected function getErrorsFromForm(FormInterface $form): array
     {
         $errors = array();
         foreach ($form->getErrors() as $error) {
             $errors[] = $error->getMessage();
         }
-        
+
         foreach ($form->all() as $childForm) {
             if (!$childForm instanceof FormInterface) {
                 continue;
             }
-            
+
             $childErrors = $this->getErrorsFromForm($childForm);
             if (!$childErrors) {
                 continue;
-            } 
-            
+            }
+
             $errors[$childForm->getName()] = sprintf('%s: %s', $this->getTranslator()->trans($childForm->getName()), implode(", ", $childErrors));
         }
-        
+
         return $errors;
     }
-    
-    protected function doDelete(Request $request, $object, string $tokenName):void
+
+    protected function doDelete(Request $request, $object, string $tokenName): void
     {
         if (!$this->isCsrfTokenValid($tokenName, $request->request->get('_token'))) {
             $this->addFlash('error', $this->getTranslator()->trans('csrf_token_detected'));
             return;
         }
-        
+
         $manager = $this->getDoctrine()->getManager();
-        try{
-            
+        try {
+
             $this->removeObject($object, $manager);
-            
+
             $this->addFlash('info', $this->getTranslator()->trans('successfull_delete'));
         } catch (\Exception $ex) {
             $this->addFlash('error', $this->getErrorMessage($ex));
         }
     }
-    
-    protected function removeObject($object, EntityManagerInterface $manager):void
+
+    protected function removeObject($object, EntityManagerInterface $manager): void
     {
-        $manager->transactional(function (EntityManagerInterface $em) use ($object) {
+        $manager->wrapInTransaction(function (EntityManagerInterface $em) use ($object) {
             $em->remove($object);
         });
 
-        if($object->getId()) {
+        if ($object->getId()) {
             $qb = $manager->createQueryBuilder('t')->delete(get_class($object), 'obj')->where('obj.id = :id')
                 ->setParameter('id', $object->getId());
             $qb->getQuery()->execute();
         }
+    }
+
+    protected function getDoctrine():ManagerRegistry
+    {
+        return $this->managerRegistry;
     }
 }
