@@ -39,6 +39,6 @@
         "giggsey/libphonenumber-for-php": "^8.12",
         "symfony/property-access": "^7.0",
         "kematjaya/hidden-type-bundle": "^7.0",
-        "spiriitlabs/form-filter-bundle": "^10.0"
+        "spiriitlabs/form-filter-bundle": "^11.0"
     }
 }
