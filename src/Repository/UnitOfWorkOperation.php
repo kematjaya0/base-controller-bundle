@@ -18,10 +18,10 @@ trait UnitOfWorkOperation
      */
     protected function create($object): void
     {
-        $uow = $this->_em->getUnitOfWork();
+        $uow = $this->getEntityManager()->getUnitOfWork();
         try {
-            $this->_em->persist($object);
-            $classMetadata = $this->_em->getClassMetadata(get_class($object));
+            $this->getEntityManager()->persist($object);
+            $classMetadata = $this->getEntityManager()->getClassMetadata(get_class($object));
             $uow->computeChangeSet($classMetadata, $object);
         } catch (\Exception $ex) {
             throw $ex;
@@ -36,7 +36,7 @@ trait UnitOfWorkOperation
      */
     protected function doPersist($object): void
     {
-        $uow = $this->_em->getUnitOfWork();
+        $uow = $this->getEntityManager()->getUnitOfWork();
         if (null == $uow->getSingleIdentifierValue($object) and !$uow->isScheduledForInsert($object)) {
             $this->create($object);
 
@@ -45,7 +45,7 @@ trait UnitOfWorkOperation
 
         try {
             $entityChangeSet = $uow->getEntityChangeSet($object);
-            $classMetadata = $this->_em->getClassMetadata(get_class($object));
+            $classMetadata = $this->getEntityManager()->getClassMetadata(get_class($object));
 
             $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
             $entityChangeSetNew = array_merge($entityChangeSet, $uow->getEntityChangeSet($object));
@@ -59,14 +59,14 @@ trait UnitOfWorkOperation
                     $entityChangeSet[$key] = $entityChangeSetNew[$key];
                 }
 
-                $uow->clearEntityChangeSet(spl_object_hash($object));
+//                $uow->clearEntityChangeSet(spl_object_hash($object));
             }
 
             foreach ($entityChangeSet as $attribute => $value) {
                 $uow->propertyChanged($object, $attribute, $value[0], $value[1]);
             }
 
-            $this->_em->persist($object);
+            $this->getEntityManager()->persist($object);
         } catch (\Exception $ex) {
 
             throw $ex;
