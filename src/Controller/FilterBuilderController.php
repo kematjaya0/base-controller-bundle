@@ -80,9 +80,9 @@ abstract class FilterBuilderController extends BasePaginationController implemen
      */
     protected function setFilters(Request $request, FormInterface &$form)
     {
-        $this->getSession()->set($this->name, 1);
         if (Request::METHOD_GET === $request->getMethod()) {
             if ($request->query->get('_reset')) {
+                $this->get('session')->set($this->name, 1); // reset pagination
                 $type = get_class($form->getConfig()->getType()->getInnerType());
                 $options = $form->getConfig()->getOptions();
                 $options['data'] = null;
@@ -95,6 +95,7 @@ abstract class FilterBuilderController extends BasePaginationController implemen
             return $form;
         }
 
+        $this->get('session')->set($this->name, 1); // reset pagination
         $filters = $request->get($form->getName());
         if ($filters) {
             $form->submit($filters);
