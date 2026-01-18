@@ -25,20 +25,20 @@
         "symfony/dom-crawler": "^6.0|^7.0"
     },
     "require": {
-        "doctrine/orm": "^2.10|^3.3",
-        "doctrine/persistence": "^3.3",
-        "symfony/http-kernel": "^6.0|^7.0",
-        "symfony/dependency-injection": "^6.0|^7.0",
-        "symfony/form": "^6.0|^7.0",
-        "symfony/config": "^6.0|^7.0",
-        "symfony/http-foundation": "^6.0|^7.0",
-        "symfony/framework-bundle": "^6.0|^7.0",
+        "doctrine/orm": "^2.10|^3.3|^3.5",
+        "doctrine/persistence": "^3.3|4.1",
+        "symfony/http-kernel": "^6.0|^7.0|^8.0",
+        "symfony/dependency-injection": "^6.0|^7.0|^8.0",
+        "symfony/form": "^6.0|^7.0|^8.0",
+        "symfony/config": "^6.0|^7.0|^8.0",
+        "symfony/http-foundation": "^6.0|^7.0|^8.0",
+        "symfony/framework-bundle": "^6.0|^7.0|^8.0",
         "symfony/translation-contracts": "^3.5",
         "knplabs/knp-paginator-bundle": "^6.6",
         "haydenpierce/class-finder": "^0.5",
-        "giggsey/libphonenumber-for-php": "^8.12",
-        "symfony/property-access": "^7.0",
-        "kematjaya/hidden-type-bundle": "^7.0",
-        "spiriitlabs/form-filter-bundle": "^11.0"
+        "giggsey/libphonenumber-for-php": "^8.12|^9.0",
+        "symfony/property-access": "^7.0|^8.0",
+        "kematjaya/hidden-type-bundle": "^7.0|^8.0",
+        "spiriitlabs/form-filter-bundle": "^11.0|^12.0"
     }
 }
