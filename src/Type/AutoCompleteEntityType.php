@@ -20,26 +20,22 @@ use Kematjaya\HiddenTypeBundle\DataTransformer\Transformer;
  */
 class AutoCompleteEntityType extends AbstractType
 {
-
-    private ManagerRegistry $registry;
-
     private Transformer $transformer;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(private ManagerRegistry $registry)
     {
-        $this->registry = $registry;
     }
 
     /**
      *
      * @return ?string
      */
-    public function getParent()
+    public function getParent():string
     {
         return TextType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver):void
     {
         parent::configureOptions($resolver);
         $resolver->setRequired(['url', "class", 'property_label']);
@@ -55,7 +51,7 @@ class AutoCompleteEntityType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options):void
     {
         $this->transformer = new ObjectToIdTransformer(
             $this->registry,
@@ -66,7 +62,7 @@ class AutoCompleteEntityType extends AbstractType
         $builder->addModelTransformer($this->transformer);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options):void
     {
         parent::buildView($view, $form, $options);
 

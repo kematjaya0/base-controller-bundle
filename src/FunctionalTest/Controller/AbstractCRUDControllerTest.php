@@ -1,8 +1,5 @@
 <?php
 
-/**
- * This file is part of the symfony.
- */
 
 namespace Kematjaya\BaseControllerBundle\FunctionalTest\Controller;
 

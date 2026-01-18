@@ -18,14 +18,14 @@ abstract class AbstractFilterType extends AbstractType
      *
      * @return string
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix():string
     {
         $class = explode('\\', strtolower(get_class($this)));
         
         return end($class);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver):void
     {
         $resolver->setDefaults(array(
             'csrf_protection'   => true,

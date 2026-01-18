@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class FloatRangeType extends AbstractType
 {
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options):void
     {
         $fromOpt = $options['from_options'];
         $fromOpt['required'] = false;
@@ -30,7 +30,7 @@ class FloatRangeType extends AbstractType
             ->add('to', TextType::class, $toOpt);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver):void
     {
         $resolver->setDefaults([
             'from_options' => [],

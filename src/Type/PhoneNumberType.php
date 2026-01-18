@@ -40,7 +40,7 @@ class PhoneNumberType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options):void
     {
         $builder->addModelTransformer(new CallbackTransformer(function ($value) use ($options) {
             if (null === $value) {
@@ -85,7 +85,7 @@ class PhoneNumberType extends AbstractType
         });
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options):void
     {
         $view->vars['phone_prefix'] = $this->getPhonePrefix($options['region']);
     }
@@ -93,7 +93,7 @@ class PhoneNumberType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver):void
     {
         $resolver->define('region');
         $resolver->setDefaults([
@@ -110,7 +110,7 @@ class PhoneNumberType extends AbstractType
      * {@inheritdoc}
      * @return string Description
      */
-    public function getParent()
+    public function getParent():string
     {
         return TextType::class;
     }
@@ -119,7 +119,7 @@ class PhoneNumberType extends AbstractType
      * {@inheritdoc}
      * @return string Description
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix():string
     {
         return 'phone';
     }

@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class DateRangeType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options):void
     {
         $fromOpt = $options['from_options'];
         $fromOpt['required'] = false;
@@ -19,7 +19,7 @@ class DateRangeType extends AbstractType
             ->add('to', DateType::class, $toOpt);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver):void
     {
         $resolver->setDefaults([
             'widget' => 'single_text',

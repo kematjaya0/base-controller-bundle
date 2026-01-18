@@ -14,12 +14,12 @@ class DateFunction extends FunctionNode
 {
     public $date;
 
-    public function getSql(SqlWalker $sqlWalker)
+    public function getSql(SqlWalker $sqlWalker):string
     {
         return "DATE(" . $sqlWalker->walkArithmeticPrimary($this->date) . ")";
     }
     
-    public function parse(Parser $parser)
+    public function parse(Parser $parser):void
     {
         $parser->match(TokenType::T_IDENTIFIER);
         $parser->match(TokenType::T_OPEN_PARENTHESIS);

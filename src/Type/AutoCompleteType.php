@@ -15,12 +15,12 @@ class AutoCompleteType extends AbstractType
      *
      * @return string
      */
-    public function getParent()
+    public function getParent():string
     {
         return TextType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver):void
     {
         parent::configureOptions($resolver);
         $resolver->setRequired(['url', "dom_parent"]);
@@ -36,7 +36,7 @@ class AutoCompleteType extends AbstractType
         ]);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options):void
     {
         parent::buildView($view, $form, $options);
 
