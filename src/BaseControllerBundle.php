@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class BaseControllerBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container):void
     {
         $container->registerForAutoconfiguration(TwigControllerInterface::class)
             ->addTag("controller.twig_arguments");
