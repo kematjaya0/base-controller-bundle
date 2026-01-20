@@ -96,7 +96,7 @@ abstract class FilterBuilderController extends BasePaginationController implemen
         }
 
         $this->getSession()->set($this->name, 1); // reset pagination
-        $filters = $request->get($form->getName());
+        $filters = $request->request->all()[$form->getName()];
         if ($filters) {
             $form->submit($filters);
             $this->getSession()->set($form->getName(), $form->getData());
