@@ -61,7 +61,7 @@ abstract class BasePaginationController extends BaseController implements Pagina
      */
     protected function processLimit(Request $request): int
     {
-        $limit = is_numeric($request->get('_limit')) ? (int)$request->get('_limit') : null;
+        $limit = is_numeric($request->query->get('_limit')) ? (int)$request->query->get('_limit') : null;
         if (null !== $limit) {
             $request->getSession()->set('limit', $limit);
         }
