@@ -1,0 +1,8 @@
+{% use "bootstrap_5_layout.html.twig" %}
+
+{% block phone_widget -%}
+    <div class="input-group">
+        <span class="input-group-text">{{ form.vars.phone_prefix }}</span>
+        {{ form_widget(form, form.vars.attr) }}
+    </div>
+{% endblock %}
