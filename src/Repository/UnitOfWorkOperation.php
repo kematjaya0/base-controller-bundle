@@ -2,6 +2,8 @@
 
 namespace Kematjaya\BaseControllerBundle\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
+
 /**
  * @package Kematjaya\BaseControllerBundle\Repository
  * @license https://opensource.org/licenses/MIT MIT
@@ -10,6 +12,14 @@ namespace Kematjaya\BaseControllerBundle\Repository;
 trait UnitOfWorkOperation
 {
 
+    protected function getEntityManager():EntityManagerInterface
+    {
+        if (!isset($this->_em)) {
+            throw new \Exception(sprintf("please inject %s service.", EntityManagerInterface::class));
+        }
+
+        return $this->_em;
+    }
     /**
      *
      * @param entity $object
