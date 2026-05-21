@@ -50,6 +50,6 @@
         "symfony/property-access": "^7.0|^8.0",
         "kematjaya/hidden-type-bundle": "^7.0|^8.0",
         "spiriitlabs/form-filter-bundle": "^11.0|^12.0",
-        "doctrine/doctrine-bundle": "^2.0"
+        "doctrine/doctrine-bundle": "^2.0|^3.2"
     }
 }
