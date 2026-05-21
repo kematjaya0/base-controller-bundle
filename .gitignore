@@ -53,3 +53,4 @@
 /nbproject
 .idea
 composer.lock
+.agents/skills

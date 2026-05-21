@@ -2,7 +2,6 @@
 
 namespace Kematjaya\BaseControllerBundle\Controller;
 
-
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -10,9 +9,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 interface DoctrineManagerRegistryControllerInterface
 {
-    const DOCTRINE_TAGGING_NAME = "controller.doctrine_arguments";
+    public const DOCTRINE_TAGGING_NAME = 'controller.doctrine_arguments';
 
-    public function setManagerRegistry(ManagerRegistry $session):void;
+    public function setManagerRegistry(ManagerRegistry $session): void;
 
-    public function getDoctrine():ManagerRegistry;
+    public function getDoctrine(): ManagerRegistry;
 }

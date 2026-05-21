@@ -1,0 +1,523 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Property Kematjaya\\BaseControllerBundle\\AST\\DateFunction\:\:\$date has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/AST/DateFunction.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\ClassFinder\\KmjClassFinder\:\:getClassesInNamespaceByInterface\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/ClassFinder/KmjClassFinder.php
+
+		-
+			message: '#^Instanceof between Symfony\\Component\\Form\\FormInterface and Symfony\\Component\\Form\\FormInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\EntityManagerInterface\:\:createQueryBuilder\(\) invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:buildErrorResult\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:buildSuccessResult\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:buildSuccessResult\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:doDelete\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:getErrorsFromForm\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:getErrorsFromForm\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:getSuccessMessage\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:processForm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:processForm\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:processForm\(\) has parameter \$func with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:processFormAjax\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:processFormAjax\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:removeObject\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:renderView\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:saveObject\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:saveObject\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:stream\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Parameter \#2 \$manager of method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:removeObject\(\) expects Doctrine\\ORM\\EntityManagerInterface, Doctrine\\Persistence\\ObjectManager given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Parameter \#2 \$manager of method Kematjaya\\BaseControllerBundle\\Controller\\BaseController\:\:saveObject\(\) expects Doctrine\\ORM\\EntityManagerInterface, Doctrine\\Persistence\\ObjectManager given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BasePaginationController\:\:createArrayPaginator\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/BasePaginationController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BasePaginationController\:\:createArrayPaginator\(\) return type has no value type specified in iterable type Knp\\Component\\Pager\\Pagination\\PaginationInterface\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/BasePaginationController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BasePaginationController\:\:createArrayPaginator\(\) return type with generic interface Knp\\Component\\Pager\\Pagination\\PaginationInterface does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/BasePaginationController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BasePaginationController\:\:createPaginator\(\) return type has no value type specified in iterable type Knp\\Component\\Pager\\Pagination\\PaginationInterface\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/BasePaginationController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\BasePaginationController\:\:createPaginator\(\) return type with generic interface Knp\\Component\\Pager\\Pagination\\PaginationInterface does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/BasePaginationController.php
+
+		-
+			message: '#^Class Doctrine\\Common\\Proxy\\Proxy not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\FilterBuilderController\:\:buildFilter\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\FilterBuilderController\:\:createFormFilter\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\FilterBuilderController\:\:createFormFilter\(\) return type with generic interface Symfony\\Component\\Form\\FormInterface does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\FilterBuilderController\:\:getFilters\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\FilterBuilderController\:\:resetFilters\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\FilterBuilderController\:\:setFilters\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\FilterBuilderController\:\:setFilters\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\FilterBuilderController\:\:updateFilter\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Controller\\FilterBuilderController\:\:updateFilter\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/FilterBuilderController.php
+
+		-
+			message: '#^Call to an undefined method Spiriit\\Bundle\\FormFilterBundle\\Filter\\Query\\QueryInterface\:\:getExpr\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: src/Filter/AbstractFilterType.php
+
+		-
+			message: '#^Class Kematjaya\\BaseControllerBundle\\Filter\\AbstractFilterType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Filter/AbstractFilterType.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Filter\\AbstractFilterType\:\:JSONQuery\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Filter/AbstractFilterType.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Filter\\AbstractFilterType\:\:dateRangeQuery\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Filter/AbstractFilterType.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Filter\\AbstractFilterType\:\:floatRangeQuery\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Filter/AbstractFilterType.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Bundle\\FrameworkBundle\\KernelBrowser\:\:getResponse\(\)\.$#'
+			identifier: method.notFound
+			count: 16
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Bundle\\FrameworkBundle\\KernelBrowser\:\:request\(\)\.$#'
+			identifier: method.notFound
+			count: 7
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:ajaxForm\(\) has parameter \$files with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:ajaxForm\(\) has parameter \$post with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:buildObject\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:doDelete\(\) has parameter \$isAjax with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:doDelete\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:errorPostAjaxForm\(\) has parameter \$files with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:errorPostAjaxForm\(\) has parameter \$postData with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:errorPostForm\(\) has parameter \$files with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:errorPostForm\(\) has parameter \$postData with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:processForm\(\) has parameter \$files with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:processForm\(\) has parameter \$post with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:saveObject\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:saveObject\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:successPostAjaxForm\(\) has parameter \$files with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:successPostAjaxForm\(\) has parameter \$postData with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:successPostForm\(\) has parameter \$files with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractCRUDControllerTest\:\:successPostForm\(\) has parameter \$postData with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 2
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Variable \$postData in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 2
+			path: src/FunctionalTest/Controller/AbstractCRUDControllerTest.php
+
+		-
+			message: '#^Access to an undefined static property static\(Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\)\:\:\$container\.$#'
+			identifier: staticProperty.notFound
+			count: 2
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Bundle\\FrameworkBundle\\KernelBrowser\:\:getResponse\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Bundle\\FrameworkBundle\\KernelBrowser\:\:request\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:generate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:generate\(\) has parameter \$name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:generate\(\) has parameter \$parameters with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:generate\(\) has parameter \$referenceType with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:getExcelFormats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:getPdfType\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:request\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:request\(\) has parameter \$files with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:request\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\FunctionalTest\\Controller\\AbstractControllerTest\:\:request\(\) has parameter \$server with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/FunctionalTest/Controller/AbstractControllerTest.php
+
+		-
+			message: '#^Trait Kematjaya\\BaseControllerBundle\\Repository\\UnitOfWorkOperation is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Repository/UnitOfWorkOperation.php
+
+		-
+			message: '#^Class Kematjaya\\BaseControllerBundle\\Type\\AutoCompleteEntityType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Type/AutoCompleteEntityType.php
+
+		-
+			message: '#^Method Kematjaya\\BaseControllerBundle\\Type\\AutoCompleteEntityType\:\:getLabelData\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Type/AutoCompleteEntityType.php
+
+		-
+			message: '#^PHPDoc tag @return with type string\|null is not subtype of native type string\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: src/Type/AutoCompleteEntityType.php
+
+		-
+			message: '#^Class Kematjaya\\BaseControllerBundle\\Type\\AutoCompleteType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Type/AutoCompleteType.php
+
+		-
+			message: '#^Class Kematjaya\\BaseControllerBundle\\Type\\DateRangeType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Type/DateRangeType.php
+
+		-
+			message: '#^Class Kematjaya\\BaseControllerBundle\\Type\\FloatRangeType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Type/FloatRangeType.php
+
+		-
+			message: '#^Class Kematjaya\\BaseControllerBundle\\Type\\PhoneNumberType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Type/PhoneNumberType.php
+
+		-
+			message: '#^Property Kematjaya\\BaseControllerBundle\\Type\\PhoneNumberType\:\:\$phoneUtil has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Type/PhoneNumberType.php

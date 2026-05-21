@@ -1,16 +1,16 @@
 <?php
 
-
 namespace Kematjaya\BaseControllerBundle\FunctionalTest\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\DomCrawler\Field\InputFormField;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Field\InputFormField;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @package App\Tests\Controller
+ *
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
@@ -32,7 +32,7 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
 
     }
 
-    protected function doIndex(string $url, bool $includeFilter = false)
+    protected function doIndex(string $url, bool $includeFilter = false): void
     {
         $this->login();
         $this->request(Request::METHOD_GET, $url);
@@ -56,19 +56,19 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
         $this->doTestFilter($url, $form);
     }
 
-    protected function doTestFilter(string $url, Form $form)
+    protected function doTestFilter(string $url, Form $form): void
     {
         $post = [];
         foreach ($form->get($form->getName()) as $field => $value) {
             switch (true) {
                 case $value instanceof InputFormField:
-                    $post[$field] = false !== strpos($value->getName(), '_at') ? (new \DateTime())->modify('-1day')->format("Y-m-d") : $value->getValue();
+                    $post[$field] = str_contains($value->getName(), '_at') ? (new \DateTime())->modify('-1day')->format('Y-m-d') : $value->getValue();
                     break;
-                case is_array($value):
+                case \is_array($value):
                     if (strpos($field, '_at')) {
                         $now = (new \DateTime())->modify('-1day');
                         foreach ($value as $type => $fields) {
-                            $post[$field][$type] = $now->modify(sprintf('+1day'))->format("Y-m-d H:i:s");
+                            $post[$field][$type] = $now->modify('+1day')->format('Y-m-d H:i:s');
                         }
                     } else {
                         $i = 1;
@@ -81,7 +81,7 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
                     break;
                 case $value instanceof ChoiceFormField:
                     foreach ($value->availableOptionValues() as $optVal) {
-                        if (strlen($optVal) > 0) {
+                        if ('' !== $optVal) {
                             $post[$field] = $optVal;
                             break;
                         }
@@ -95,16 +95,16 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
 
         $postData = [
             'submit' => true,
-            $form->getName() => $post
+            $form->getName() => $post,
         ];
 
         $this->request(Request::METHOD_POST, $url, $postData);
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-        $this->request(Request::METHOD_GET, $url . '?_reset=1');
+        $this->request(Request::METHOD_GET, $url.'?_reset=1');
         $this->assertTrue($this->client->getResponse()->isSuccessful());
     }
 
-    protected function processForm(string $url, $post = array(), $files = [])
+    protected function processForm(string $url, $post = [], $files = []): void
     {
         $this->login();
 
@@ -123,33 +123,33 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
         $post['_token'] = 'test';
         $postData = [
             'submit' => true,
-            $form->getName() => $post
+            $form->getName() => $post,
         ];
 
         $duplicatedFile = [];
         if (!empty($files)) {
             foreach ($files as $k => $file) {
-                $fileNameDest = md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
+                $fileNameDest = md5($file->getClientOriginalName()).'.'.$file->getClientOriginalExtension();
 
-                if (copy($file->getPath() . DIRECTORY_SEPARATOR . $file->getClientOriginalName(), $file->getPath() . DIRECTORY_SEPARATOR . $fileNameDest)) {
-                    $duplicatedFile[$k] = new UploadedFile($file->getPath() . DIRECTORY_SEPARATOR . $fileNameDest, $fileNameDest);
+                if (copy($file->getPath().\DIRECTORY_SEPARATOR.$file->getClientOriginalName(), $file->getPath().\DIRECTORY_SEPARATOR.$fileNameDest)) {
+                    $duplicatedFile[$k] = new UploadedFile($file->getPath().\DIRECTORY_SEPARATOR.$fileNameDest, $fileNameDest);
                 }
             }
 
             $files = [
-                $form->getName() => $files
+                $form->getName() => $files,
             ];
         }
 
-        if (!empty($postData) or !empty($files)) {
+        if (!empty($postData) || !empty($files)) {
 
             $this->errorPostForm($url, $postData, $files);
             // test true
             $postData[$form->getName()]['_token'] = $form->get($form->getName())['_token']->getValue();
 
-            if (!empty($files) and !empty($duplicatedFile)) {
+            if (!empty($files) && !empty($duplicatedFile)) {
                 $files = [
-                    $form->getName() => $duplicatedFile
+                    $form->getName() => $duplicatedFile,
                 ];
             }
 
@@ -159,7 +159,7 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
         }
     }
 
-    protected function errorPostForm(string $url, $postData = array(), $files = array()): void
+    protected function errorPostForm(string $url, $postData = [], $files = []): void
     {
         $this->client->request(Request::METHOD_POST, $url, $postData, $files);
         $this->assertTrue($this->client->getResponse()->isSuccessful());
@@ -168,13 +168,13 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
         $this->assertTrue(false !== $strPos);
     }
 
-    protected function successPostForm(string $url, $postData = array(), $files = array()): void
+    protected function successPostForm(string $url, $postData = [], $files = []): void
     {
         $this->client->request(Request::METHOD_POST, $url, $postData, $files);
         $this->assertTrue($this->client->getResponse()->isRedirection());
     }
 
-    protected function ajaxForm(string $url, $post = array(), $files = [])
+    protected function ajaxForm(string $url, $post = [], $files = []): void
     {
         $this->login();
 
@@ -193,33 +193,33 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
         $post['_token'] = 'test';
         $postData = [
             'submit' => true,
-            $form->getName() => $post
+            $form->getName() => $post,
         ];
 
         $duplicatedFile = [];
         if (!empty($files)) {
             foreach ($files as $k => $file) {
-                $fileNameDest = md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
+                $fileNameDest = md5($file->getClientOriginalName()).'.'.$file->getClientOriginalExtension();
 
-                if (copy($file->getPath() . DIRECTORY_SEPARATOR . $file->getClientOriginalName(), $file->getPath() . DIRECTORY_SEPARATOR . $fileNameDest)) {
-                    $duplicatedFile[$k] = new UploadedFile($file->getPath() . DIRECTORY_SEPARATOR . $fileNameDest, $fileNameDest);
+                if (copy($file->getPath().\DIRECTORY_SEPARATOR.$file->getClientOriginalName(), $file->getPath().\DIRECTORY_SEPARATOR.$fileNameDest)) {
+                    $duplicatedFile[$k] = new UploadedFile($file->getPath().\DIRECTORY_SEPARATOR.$fileNameDest, $fileNameDest);
                 }
             }
 
             $files = [
-                $form->getName() => $files
+                $form->getName() => $files,
             ];
         }
 
-        if (!empty($postData) or !empty($files)) {
+        if (!empty($postData) || !empty($files)) {
 
             $this->errorPostAjaxForm($url, $postData, $files);
             // test true
             $postData[$form->getName()]['_token'] = $form->get($form->getName())['_token']->getValue();
 
-            if (!empty($files) and !empty($duplicatedFile)) {
+            if (!empty($files) && !empty($duplicatedFile)) {
                 $files = [
-                    $form->getName() => $duplicatedFile
+                    $form->getName() => $duplicatedFile,
                 ];
             }
 
@@ -229,30 +229,30 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
         }
     }
 
-    protected function errorPostAjaxForm(string $url, $postData = array(), $files = array()): void
+    protected function errorPostAjaxForm(string $url, $postData = [], $files = []): void
     {
-        $this->client->request(Request::METHOD_POST, $url, $postData, $files);//dump($this->client->getResponse()->getContent());exit;
+        $this->client->request(Request::METHOD_POST, $url, $postData, $files); // dump($this->client->getResponse()->getContent());exit;
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $output = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertTrue(json_last_error() == JSON_ERROR_NONE);
+        $this->assertTrue(\JSON_ERROR_NONE == json_last_error());
         $this->assertTrue($output['process']);
-        $this->assertTrue(strlen($output['errors']) > 0);
+        $this->assertTrue('' !== $output['errors']);
     }
 
-    protected function successPostAjaxForm(string $url, $postData = array(), $files = array()): void
+    protected function successPostAjaxForm(string $url, $postData = [], $files = []): void
     {
         $this->client->request(Request::METHOD_POST, $url, $postData, $files);
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $output = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertTrue(json_last_error() == JSON_ERROR_NONE);
-        $this->assertTrue($output['process'] and $output['status']);
+        $this->assertTrue(\JSON_ERROR_NONE == json_last_error());
+        $this->assertTrue($output['process'] && $output['status']);
     }
 
-    protected function doDelete(string $url, $object, string $urlReferer = null, $isAjax = false, bool $checkObject = false)
+    protected function doDelete(string $url, $object, ?string $urlReferer = null, $isAjax = false, bool $checkObject = false): void
     {
         $this->login();
 
-        $token = self::$container->get('security.csrf.token_manager')->getToken('delete' . $object->getId());
+        $token = $this->client->getContainer()->get('security.csrf.token_manager')->getToken('delete'.$object->getId());
         $server = [];
         if ($urlReferer) {
             $server['HTTP_REFERER'] = $urlReferer;
@@ -260,7 +260,7 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
 
         $identifier = $object->getId();
         $this->client->request(Request::METHOD_DELETE, $url, [
-            '_token' => (string)$token,
+            '_token' => (string) $token,
         ], [], $server);
 
         if ($urlReferer) {
@@ -275,13 +275,13 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
         }
 
         if ($checkObject) {
-            $objects = $this->doctrine->getRepository(get_class($object))->find($identifier);
+            $objects = $this->doctrine->getRepository($object::class)->find($identifier);
             $this->assertNull($objects);
         }
 
     }
 
-    protected function doShow(string $url)
+    protected function doShow(string $url): void
     {
         $this->login();
         $this->request(Request::METHOD_GET, $url);

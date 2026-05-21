@@ -2,25 +2,25 @@
 
 namespace Kematjaya\BaseControllerBundle;
 
+use Kematjaya\BaseControllerBundle\CompilerPass\ControllerCompilerPass;
 use Kematjaya\BaseControllerBundle\Controller\DoctrineManagerRegistryControllerInterface;
-use Kematjaya\BaseControllerBundle\Controller\SessionControllerInterface;
-use Kematjaya\BaseControllerBundle\Controller\TwigControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\LexikFilterControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\PaginationControllerInterface;
+use Kematjaya\BaseControllerBundle\Controller\SessionControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\TranslatorControllerInterface;
-use Kematjaya\BaseControllerBundle\CompilerPass\ControllerCompilerPass;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Kematjaya\BaseControllerBundle\Controller\TwigControllerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
 class BaseControllerBundle extends Bundle
 {
-    public function build(ContainerBuilder $container):void
+    public function build(ContainerBuilder $container): void
     {
         $container->registerForAutoconfiguration(TwigControllerInterface::class)
-            ->addTag("controller.twig_arguments");
+            ->addTag('controller.twig_arguments');
 
         $container->registerForAutoconfiguration(SessionControllerInterface::class)
             ->addTag(SessionControllerInterface::SESSION_TAGGING_NAME);

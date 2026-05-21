@@ -7,29 +7,26 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @package Kematjaya\Filter
+ *
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
 abstract class AbstractFilterType extends AbstractType
 {
     use FilterFunctionTrait;
-    
-    /**
-     *
-     * @return string
-     */
-    public function getBlockPrefix():string
+
+    public function getBlockPrefix(): string
     {
-        $class = explode('\\', strtolower(get_class($this)));
-        
+        $class = explode('\\', strtolower(static::class));
+
         return end($class);
     }
 
-    public function configureOptions(OptionsResolver $resolver):void
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
-            'csrf_protection'   => true,
-            'validation_groups' => array('filtering')
-        ));
+        $resolver->setDefaults([
+            'csrf_protection' => true,
+            'validation_groups' => ['filtering'],
+        ]);
     }
 }

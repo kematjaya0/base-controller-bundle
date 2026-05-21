@@ -3,23 +3,23 @@
 namespace Kematjaya\BaseControllerBundle\AST;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\SqlWalker;
 use Doctrine\ORM\Query\Parser;
+use Doctrine\ORM\Query\SqlWalker;
 use Doctrine\ORM\Query\TokenType;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
-class DateFunction extends FunctionNode 
+class DateFunction extends FunctionNode
 {
     public $date;
 
-    public function getSql(SqlWalker $sqlWalker):string
+    public function getSql(SqlWalker $sqlWalker): string
     {
-        return "DATE(" . $sqlWalker->walkArithmeticPrimary($this->date) . ")";
+        return 'DATE('.$sqlWalker->walkArithmeticPrimary($this->date).')';
     }
-    
-    public function parse(Parser $parser):void
+
+    public function parse(Parser $parser): void
     {
         $parser->match(TokenType::T_IDENTIFIER);
         $parser->match(TokenType::T_OPEN_PARENTHESIS);

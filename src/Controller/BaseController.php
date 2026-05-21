@@ -2,15 +2,15 @@
 
 namespace Kematjaya\BaseControllerBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Form\FormInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 /**
@@ -43,22 +43,16 @@ abstract class BaseController extends AbstractController implements TwigControll
         return $this->twig;
     }
 
-    public function setRequestStack(RequestStack $requestStack):void
+    public function setRequestStack(RequestStack $requestStack): void
     {
         $this->session = $requestStack->getSession();
     }
 
-    public function getSession():SessionInterface
+    public function getSession(): SessionInterface
     {
         return $this->session;
     }
 
-    /**
-     *
-     * @param string $view
-     * @param array $parameters
-     * @return string
-     */
     protected function renderView(string $view, array $parameters = []): string
     {
         return $this->getTwig()->render($view, $parameters);
@@ -67,7 +61,7 @@ abstract class BaseController extends AbstractController implements TwigControll
     /**
      * Streams a view.
      */
-    protected function stream(string $view, array $parameters = [], StreamedResponse $response = null): StreamedResponse
+    protected function stream(string $view, array $parameters = [], ?StreamedResponse $response = null): StreamedResponse
     {
         if (!$this->twig) {
             throw new \LogicException('You cannot use the "stream" method if the Twig Bundle is not available. Try running "composer require symfony/twig-bundle".');
@@ -75,7 +69,7 @@ abstract class BaseController extends AbstractController implements TwigControll
 
         $twig = $this->getTwig();
 
-        $callback = function () use ($twig, $view, $parameters) {
+        $callback = static function () use ($twig, $view, $parameters) {
             $twig->display($view, $parameters);
         };
 
@@ -91,20 +85,20 @@ abstract class BaseController extends AbstractController implements TwigControll
     protected function buildSuccessResult(string $type, $object)
     {
         return [
-            "process" => true,
-            "status" => true,
-            "message" => $this->getTranslator()->trans('messages.' . $type . '.success'),
-            "errors" => null
+            'process' => true,
+            'status' => true,
+            'message' => $this->getTranslator()->trans('messages.'.$type.'.success'),
+            'errors' => null,
         ];
     }
 
     protected function buildErrorResult(string $type, string $message)
     {
         return [
-            "process" => true,
-            "status" => false,
-            "message" => $this->getTranslator()->trans('messages.' . $type . '.error'),
-            "errors" => $message
+            'process' => true,
+            'status' => false,
+            'message' => $this->getTranslator()->trans('messages.'.$type.'.error'),
+            'errors' => $message,
         ];
     }
 
@@ -114,7 +108,7 @@ abstract class BaseController extends AbstractController implements TwigControll
 
         if (!$form->isSubmitted()) {
 
-            return ["process" => false];
+            return ['process' => false];
         }
 
         $type = 'add';
@@ -122,7 +116,7 @@ abstract class BaseController extends AbstractController implements TwigControll
 
             $errors = $this->getErrorsFromForm($form);
 
-            return $this->buildErrorResult($type, implode(", ", $errors));
+            return $this->buildErrorResult($type, implode(', ', $errors));
         }
 
         $manager = $this->getDoctrine()->getManager();
@@ -139,7 +133,7 @@ abstract class BaseController extends AbstractController implements TwigControll
 
     protected function saveObject($object, EntityManagerInterface $manager)
     {
-        $manager->wrapInTransaction(function (EntityManagerInterface $em) use ($object) {
+        $manager->wrapInTransaction(static function (EntityManagerInterface $em) use ($object) {
             $em->persist($object);
         });
 
@@ -155,7 +149,7 @@ abstract class BaseController extends AbstractController implements TwigControll
         }
 
         if (!$form->isValid()) {
-            $this->addFlash("error", implode(', ', $this->getErrorsFromForm($form)));
+            $this->addFlash('error', implode(', ', $this->getErrorsFromForm($form)));
 
             return false;
         }
@@ -164,11 +158,11 @@ abstract class BaseController extends AbstractController implements TwigControll
         try {
             $object = $this->saveObject($form->getData(), $manager);
 
-            $this->addFlash("info", $this->getSuccessMessage($object));
+            $this->addFlash('info', $this->getSuccessMessage($object));
 
             return $object;
         } catch (\Exception $ex) {
-            $this->addFlash("error", $this->getErrorMessage($ex));
+            $this->addFlash('error', $this->getErrorMessage($ex));
         }
 
         return false;
@@ -186,7 +180,7 @@ abstract class BaseController extends AbstractController implements TwigControll
 
     protected function getErrorsFromForm(FormInterface $form): array
     {
-        $errors = array();
+        $errors = [];
         foreach ($form->getErrors() as $error) {
             $errors[] = $error->getMessage();
         }
@@ -201,7 +195,7 @@ abstract class BaseController extends AbstractController implements TwigControll
                 continue;
             }
 
-            $errors[$childForm->getName()] = sprintf('%s: %s', $this->getTranslator()->trans($childForm->getName()), implode(", ", $childErrors));
+            $errors[$childForm->getName()] = \sprintf('%s: %s', $this->getTranslator()->trans($childForm->getName()), implode(', ', $childErrors));
         }
 
         return $errors;
@@ -211,6 +205,7 @@ abstract class BaseController extends AbstractController implements TwigControll
     {
         if (!$this->isCsrfTokenValid($tokenName, $request->request->get('_token'))) {
             $this->addFlash('error', $this->getTranslator()->trans('csrf_token_detected'));
+
             return;
         }
 
@@ -227,23 +222,23 @@ abstract class BaseController extends AbstractController implements TwigControll
 
     protected function removeObject($object, EntityManagerInterface $manager): void
     {
-        $manager->wrapInTransaction(function (EntityManagerInterface $em) use ($object) {
+        $manager->wrapInTransaction(static function (EntityManagerInterface $em) use ($object) {
             $em->remove($object);
         });
 
         if ($object->getId()) {
-            $qb = $manager->createQueryBuilder('t')->delete(get_class($object), 'obj')->where('obj.id = :id')
+            $qb = $manager->createQueryBuilder('t')->delete($object::class, 'obj')->where('obj.id = :id')
                 ->setParameter('id', $object->getId());
             $qb->getQuery()->execute();
         }
     }
 
-    public function setManagerRegistry(ManagerRegistry $managerRegistry):void
+    public function setManagerRegistry(ManagerRegistry $managerRegistry): void
     {
         $this->managerRegistry = $managerRegistry;
     }
 
-    public function getDoctrine():ManagerRegistry
+    public function getDoctrine(): ManagerRegistry
     {
         return $this->managerRegistry;
     }

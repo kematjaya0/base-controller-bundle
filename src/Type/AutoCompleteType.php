@@ -2,49 +2,44 @@
 
 namespace Kematjaya\BaseControllerBundle\Type;
 
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class AutoCompleteType extends AbstractType
 {
-    /**
-     *
-     * @return string
-     */
-    public function getParent():string
+    public function getParent(): string
     {
         return TextType::class;
     }
 
-    public function configureOptions(OptionsResolver $resolver):void
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
-        $resolver->setRequired(['url', "dom_parent"]);
-        $resolver->addNormalizer('attr', function (Options $options) {
+        $resolver->setRequired(['url', 'dom_parent']);
+        $resolver->addNormalizer('attr', static function (Options $options) {
             return [
-                'class' => 'autocomplete form-control', 'url' => $options['url']
+                'class' => 'autocomplete form-control', 'url' => $options['url'],
             ];
         });
 
-
         $resolver->setDefaults([
-            "dom_parent" => null
+            'dom_parent' => null,
         ]);
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options):void
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         parent::buildView($view, $form, $options);
 
-        $attr = $view->vars["attr"];
-        $view->vars["html_attributes"] = join(" ", array_map(function ($key) use ($attr) {
-            return sprintf('%s="%s"', $key, $attr[$key]);
+        $attr = $view->vars['attr'];
+        $view->vars['html_attributes'] = implode(' ', array_map(static function ($key) use ($attr) {
+            return \sprintf('%s="%s"', $key, $attr[$key]);
         }, array_keys($attr)));
 
-        $view->vars["appendTo"] = $options["dom_parent"];
+        $view->vars['appendTo'] = $options['dom_parent'];
     }
 }

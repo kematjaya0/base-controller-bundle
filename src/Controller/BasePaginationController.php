@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @package Kematjaya\BaseControllerBundle\Controller
+ *
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
@@ -20,15 +21,12 @@ abstract class BasePaginationController extends BaseController implements Pagina
 
     public function setPaginator(PaginatorInterface $paginator): void
     {
-        $this->name = "pagination_" . strtolower(str_replace("\\", "_", get_class($this)));
+        $this->name = 'pagination_'.strtolower(str_replace('\\', '_', static::class));
         $this->paginator = $paginator;
     }
 
     /**
-     * create Paginator object
-     * @param QueryBuilder $queryBuilder
-     * @param Request $request
-     * @return PaginationInterface
+     * create Paginator object.
      */
     protected function createPaginator(QueryBuilder $queryBuilder, Request $request): PaginationInterface
     {
@@ -39,13 +37,7 @@ abstract class BasePaginationController extends BaseController implements Pagina
         );
     }
 
-    /**
-     *
-     * @param array $data
-     * @param Request $request
-     * @return PaginationInterface
-     */
-    protected function createArrayPaginator(array $data = [], Request $request = null): PaginationInterface
+    protected function createArrayPaginator(array $data = [], ?Request $request = null): PaginationInterface
     {
         return $this->getPaginator()->paginate(
             $data,
@@ -54,19 +46,14 @@ abstract class BasePaginationController extends BaseController implements Pagina
         );
     }
 
-    /**
-     *
-     * @param Request $request
-     * @return int
-     */
     protected function processLimit(Request $request): int
     {
-        $limit = is_numeric($request->query->get('_limit')) ? (int)$request->query->get('_limit') : null;
+        $limit = is_numeric($request->query->get('_limit')) ? (int) $request->query->get('_limit') : null;
         if (null !== $limit) {
             $request->getSession()->set('limit', $limit);
         }
 
-        return $request->getSession()->get("limit", $this->limit);
+        return $request->getSession()->get('limit', $this->limit);
     }
 
     protected function getPage(Request $request): int
@@ -75,7 +62,7 @@ abstract class BasePaginationController extends BaseController implements Pagina
             return 1;
         }
 
-        if (!$request->query->has("page")) {
+        if (!$request->query->has('page')) {
             $page = $this->getSession()->get($this->name);
             if (null === $page) {
                 $this->getSession()->set($this->name, 1);
@@ -85,7 +72,7 @@ abstract class BasePaginationController extends BaseController implements Pagina
             return $page;
         }
 
-        $this->getSession()->set($this->name, $request->query->getInt("page"));
+        $this->getSession()->set($this->name, $request->query->getInt('page'));
 
         return $this->getSession()->get($this->name);
     }
@@ -94,5 +81,4 @@ abstract class BasePaginationController extends BaseController implements Pagina
     {
         return $this->paginator;
     }
-
 }

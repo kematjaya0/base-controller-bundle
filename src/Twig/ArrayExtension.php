@@ -7,6 +7,7 @@ use Twig\TwigFunction;
 
 /**
  * @package Kematjaya\BaseControllerBundle\Twig
+ *
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
@@ -15,10 +16,9 @@ class ArrayExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('in_array', function ($value, $arr) {
-                return in_array($value, $arr);
-            })
+            new TwigFunction('in_array', static function ($value, $arr) {
+                return \in_array($value, $arr);
+            }),
         ];
     }
-
 }

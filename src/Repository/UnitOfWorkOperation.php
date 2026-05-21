@@ -6,24 +6,24 @@ use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @package Kematjaya\BaseControllerBundle\Repository
+ *
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
 trait UnitOfWorkOperation
 {
-
-    protected function getEntityManager():EntityManagerInterface
+    protected function getEntityManager(): EntityManagerInterface
     {
         if (!isset($this->_em)) {
-            throw new \Exception(sprintf("please inject %s service.", EntityManagerInterface::class));
+            throw new \Exception(\sprintf('please inject %s service.', EntityManagerInterface::class));
         }
 
         return $this->_em;
     }
+
     /**
-     *
      * @param entity $object
-     * @return void
+     *
      * @throws \Exception
      */
     protected function create($object): void
@@ -31,7 +31,7 @@ trait UnitOfWorkOperation
         $uow = $this->getEntityManager()->getUnitOfWork();
         try {
             $this->getEntityManager()->persist($object);
-            $classMetadata = $this->getEntityManager()->getClassMetadata(get_class($object));
+            $classMetadata = $this->getEntityManager()->getClassMetadata($object::class);
             $uow->computeChangeSet($classMetadata, $object);
         } catch (\Exception $ex) {
             throw $ex;
@@ -39,15 +39,14 @@ trait UnitOfWorkOperation
     }
 
     /**
-     *
      * @param entity $object
-     * @return void
+     *
      * @throws \Exception
      */
     protected function doPersist($object): void
     {
         $uow = $this->getEntityManager()->getUnitOfWork();
-        if (null == $uow->getSingleIdentifierValue($object) and !$uow->isScheduledForInsert($object)) {
+        if (null == $uow->getSingleIdentifierValue($object) && !$uow->isScheduledForInsert($object)) {
             $this->create($object);
 
             return;
@@ -55,7 +54,7 @@ trait UnitOfWorkOperation
 
         try {
             $entityChangeSet = $uow->getEntityChangeSet($object);
-            $classMetadata = $this->getEntityManager()->getClassMetadata(get_class($object));
+            $classMetadata = $this->getEntityManager()->getClassMetadata($object::class);
 
             $uow->recomputeSingleEntityChangeSet($classMetadata, $object);
             $entityChangeSetNew = array_merge($entityChangeSet, $uow->getEntityChangeSet($object));
@@ -69,7 +68,7 @@ trait UnitOfWorkOperation
                     $entityChangeSet[$key] = $entityChangeSetNew[$key];
                 }
 
-//                $uow->clearEntityChangeSet(spl_object_hash($object));
+                //                $uow->clearEntityChangeSet(spl_object_hash($object));
             }
 
             foreach ($entityChangeSet as $attribute => $value) {

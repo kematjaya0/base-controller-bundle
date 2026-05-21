@@ -2,14 +2,15 @@
 
 namespace Kematjaya\BaseControllerBundle\Controller;
 
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Proxy\Proxy;
+use Doctrine\ORM\QueryBuilder;
+use Spiriit\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Spiriit\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 
 /**
  * @package Kematjaya\BaseControllerBundle\Controller
+ *
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
@@ -27,13 +28,8 @@ abstract class FilterBuilderController extends BasePaginationController implemen
         return $this->filterBuilderUpdater;
     }
 
-
     /**
-     * Process form with QueryBuilder object
-     * @param Request $request
-     * @param FormInterface $form
-     * @param QueryBuilder $queryBuilder
-     * @return QueryBuilder
+     * Process form with QueryBuilder object.
      */
     protected function buildFilter(Request $request, FormInterface &$form, QueryBuilder $queryBuilder): QueryBuilder
     {
@@ -47,16 +43,12 @@ abstract class FilterBuilderController extends BasePaginationController implemen
     }
 
     /**
-     * Creating filter form object
-     * @param string $type
-     * @param object $data
-     * @param array $options
-     * @return FormInterface
+     * Creating filter form object.
      */
-    protected function createFormFilter(string $type, array $options = array()): FormInterface
+    protected function createFormFilter(string $type, array $options = []): FormInterface
     {
         $reflection = new \ReflectionClass($type);
-        $name = sprintf("%s", strtolower($reflection->getShortName()));
+        $name = \sprintf('%s', strtolower($reflection->getShortName()));
         $data = $this->getFilters($name);
         $form = parent::createForm($type, $data, $options);
 
@@ -64,9 +56,7 @@ abstract class FilterBuilderController extends BasePaginationController implemen
     }
 
     /**
-     * Reset filter value
-     *
-     * @param FormInterface $form
+     * Reset filter value.
      */
     protected function resetFilters(FormInterface $form): void
     {
@@ -74,16 +64,14 @@ abstract class FilterBuilderController extends BasePaginationController implemen
     }
 
     /**
-     * Set filter value
-     * @param Request $request
-     * @param FormInterface $form
+     * Set filter value.
      */
     protected function setFilters(Request $request, FormInterface &$form)
     {
         if (Request::METHOD_GET === $request->getMethod()) {
             if ($request->query->get('_reset')) {
                 $this->getSession()->set($this->name, 1); // reset pagination
-                $type = get_class($form->getConfig()->getType()->getInnerType());
+                $type = \get_class($form->getConfig()->getType()->getInnerType());
                 $options = $form->getConfig()->getOptions();
                 $options['data'] = null;
                 $form = parent::createForm($type, null, $options);
@@ -105,7 +93,6 @@ abstract class FilterBuilderController extends BasePaginationController implemen
         return $form;
     }
 
-
     protected function updateFilter(Request $request, FormInterface $form): ?array
     {
         $this->setFilters($request, $form);
@@ -114,26 +101,26 @@ abstract class FilterBuilderController extends BasePaginationController implemen
     }
 
     /**
-     * get filter value
-     * @param string $name
+     * get filter value.
+     *
      * @return array|null
      */
     protected function getFilters(string $name)
     {
         $filters = $this->getSession()->get($name, null);
-        if (!is_array($filters)) {
+        if (!\is_array($filters)) {
 
             return null;
         }
 
         foreach ($filters as $k => $v) {
-            if (!is_object($v)) {
+            if (!\is_object($v)) {
                 continue;
             }
 
             $manager = $this->getDoctrine()->getManager();
-            if (!$manager->getMetadataFactory()->isTransient(get_class($v)) or $v instanceof Proxy) {
-                $filters[$k] = $manager->getRepository(get_class($v))->find($v->getId());
+            if (!$manager->getMetadataFactory()->isTransient($v::class) || $v instanceof Proxy) {
+                $filters[$k] = $manager->getRepository($v::class)->find($v->getId());
             }
         }
 
