@@ -45,9 +45,16 @@
 # Composer PHAR
 /composer.phar
 
+# Composer lock file: a library must not pin its consumers' dependency graph
+/composer.lock
+
 # Backup entities generated with doctrine:generate:entities command
 **/Entity/*~
 
 # Embedded web-server pid file
 /.web-server-pid
 /nbproject/private/
+
+# IDE and agent tooling
+/.idea/
+/.omo/
