@@ -143,7 +143,7 @@ class FooController extends BaseController
 > the query string. Symfony's `Request::create()` places `DELETE` parameters in
 > the *body*, so functional tests and AJAX calls that pass `_token` as a
 > request parameter work unchanged. A plain browser link cannot send a `DELETE`
-> body, so build those URLs as `?delete<id>=<token>`.
+> body, so build those URLs as `?_token=<token>`.
 
 ### 3.2 Form types
 
