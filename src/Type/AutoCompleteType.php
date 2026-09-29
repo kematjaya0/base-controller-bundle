@@ -2,15 +2,17 @@
 
 namespace Kematjaya\BaseControllerBundle\Type;
 
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class AutoCompleteType extends AbstractType
 {
+    use HtmlAttributesTrait;
+    
     /**
      * 
      * @return string
@@ -24,10 +26,14 @@ class AutoCompleteType extends AbstractType
     {   
         parent::configureOptions($resolver);
         $resolver->setRequired(['url', "dom_parent"]);
-        $resolver->addNormalizer('attr', function (Options $options) {
-            return [
-                'class' => 'autocomplete form-control', 'url' => $options['url']
-            ];
+        // The previous normalizer returned a fixed array, discarding every
+        // attribute supplied by the caller (id, action, ...). Merging keeps
+        // caller attributes while still applying the autocomplete defaults.
+        $resolver->addNormalizer('attr', function (Options $options, $value) {
+            return array_merge($value, [
+                'class' => $value['class'] ?? 'autocomplete form-control',
+                'url' => $options['url'],
+            ]);
         });
         
         
@@ -40,10 +46,7 @@ class AutoCompleteType extends AbstractType
     {
         parent::buildView($view, $form, $options);
         
-        $attr = $view->vars["attr"];
-        $view->vars["html_attributes"] = join(" ", array_map(function ($key) use ($attr) {
-            return sprintf('%s="%s"', $key, $attr[$key]);
-        }, array_keys($attr)));
+        $view->vars["html_attributes"] = $this->buildHtmlAttributes($view->vars["attr"]);
         
         $view->vars["appendTo"] = $options["dom_parent"];
     }

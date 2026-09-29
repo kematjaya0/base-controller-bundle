@@ -63,7 +63,13 @@ trait UnitOfWorkOperation
                     $entityChangeSet[$key] = $entityChangeSetNew[$key];
                 }
 
-                $uow->clearEntityChangeSet(spl_object_hash($object));
+                // UnitOfWork::clearEntityChangeSet() was removed in ORM 3, so
+                // this is only reachable on ORM 2, where clearing first keeps
+                // the re-applied propertyChanged() calls from duplicating
+                // entries. On ORM 3 the change set is rebuilt in place.
+                if (method_exists($uow, 'clearEntityChangeSet')) {
+                    $uow->clearEntityChangeSet(spl_object_hash($object));
+                }
             }
             
             foreach ($entityChangeSet as $attribute => $value) {

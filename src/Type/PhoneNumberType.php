@@ -2,19 +2,19 @@
 
 namespace Kematjaya\BaseControllerBundle\Type;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
-use libphonenumber\PhoneNumberUtil;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 
 /**
  * @package Kematjaya\BaseControllerBundle\Type
@@ -26,12 +26,6 @@ class PhoneNumberType extends AbstractType
     
     protected $phoneUtil;
     
-    /**
-     * 
-     * @var string
-     */
-    protected $errors;
-    
     public function __construct()
     {
         $this->phoneUtil = PhoneNumberUtil::getInstance();
@@ -42,6 +36,12 @@ class PhoneNumberType extends AbstractType
     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        // The error is held in a per-form closure, not on the type instance.
+        // This type is a shared service, so keeping it on $this leaked the
+        // error of one invalid submit into every later form in the same request
+        // (and across requests in a long-running worker).
+        $error = null;
+        
         $builder->addModelTransformer(new CallbackTransformer(function ($value) use ($options) {
                 if (null === $value) {
                     return $value;
@@ -50,7 +50,11 @@ class PhoneNumberType extends AbstractType
                 $prefix = $this->getPhonePrefix($options['region']);
                 
                 return trim(str_replace($prefix, "", $value));
-            }, function ($value) use ($options) {
+            }, function ($value) use ($options, &$error) {
+                // Always start from a clean slate: the same form instance can be
+                // submitted more than once.
+                $error = null;
+                
                 if (null === $value) {
                     return null;
                 }
@@ -60,14 +64,14 @@ class PhoneNumberType extends AbstractType
                 try {
                     $phoneNumber = $this->phoneUtil->parse(trim($value), $options['region']);
                 } catch (\Exception $ex) {
-                    $this->errors = $ex->getMessage();
+                    $error = $ex->getMessage();
                     
                     return null;
                 }
                 
                 if (!$this->phoneUtil->isValidNumber($phoneNumber)) {
                     $ex = $this->phoneUtil->getExampleNumber($options['region']);
-                    $this->errors = sprintf("please insert a valid number, e.g: %s", $this->phoneUtil->format($ex, PhoneNumberFormat::INTERNATIONAL));
+                    $error = sprintf("please insert a valid number, e.g: %s", $this->phoneUtil->format($ex, PhoneNumberFormat::INTERNATIONAL));
                     
                     return null;
                 }
@@ -75,12 +79,10 @@ class PhoneNumberType extends AbstractType
                 return $this->phoneUtil->format($phoneNumber, PhoneNumberFormat::INTERNATIONAL);
             }));
             
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-            if (null !== $this->errors) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use (&$error) {
+            if (null !== $error) {
                 $event->getForm()
-                        ->addError(new FormError($this->errors));
-                
-                return;
+                        ->addError(new FormError($error));
             }
         });
     }

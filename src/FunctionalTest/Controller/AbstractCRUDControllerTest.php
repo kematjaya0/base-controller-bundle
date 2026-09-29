@@ -255,7 +255,7 @@ abstract class AbstractCRUDControllerTest extends AbstractControllerTest
     {
         $this->login();
         
-        $token = self::$container->get('security.csrf.token_manager')->getToken('delete' . $object->getId());
+        $token = static::getContainer()->get('security.csrf.token_manager')->getToken('delete' . $object->getId());
         $server = [];
         if ($urlReferer) {
             $server['HTTP_REFERER'] = $urlReferer;

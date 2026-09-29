@@ -3,7 +3,7 @@
 namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Doctrine\ORM\QueryBuilder;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPaginationInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,11 +21,13 @@ abstract class BasePaginationController extends BaseController implements Pagina
     protected $paginator;
 
     /**
+     *
      * @var string
      */
     protected $name;
 
     /**
+     *
      * @var int
      */
     protected $limit = 20;
@@ -40,9 +42,9 @@ abstract class BasePaginationController extends BaseController implements Pagina
      * create Paginator object
      * @param QueryBuilder $queryBuilder
      * @param Request $request
-     * @return SlidingPaginationInterface
+     * @return PaginationInterface
      */
-    protected function createPaginator(QueryBuilder $queryBuilder, Request $request): SlidingPaginationInterface
+    protected function createPaginator(QueryBuilder $queryBuilder, Request $request): PaginationInterface
     {
         return $this->getPaginator()->paginate(
             $queryBuilder,
@@ -55,9 +57,9 @@ abstract class BasePaginationController extends BaseController implements Pagina
      *
      * @param array $data
      * @param Request $request
-     * @return SlidingPaginationInterface
+     * @return PaginationInterface
      */
-    protected function createArrayPaginator(array $data = [], Request $request): SlidingPaginationInterface
+    protected function createArrayPaginator(array $data = [], Request $request): PaginationInterface
     {
         return $this->getPaginator()->paginate(
             $data,
@@ -75,10 +77,12 @@ abstract class BasePaginationController extends BaseController implements Pagina
     {
         $limit = is_numeric($request->get('_limit')) ? (int) $request->get('_limit') : null;
         if (null !== $limit) {
-            $request->getSession()->set('limit', $limit);
+            $this->getSession()->set($this->name.'_limit', $limit);
         }
 
-        return $request->getSession()->get("limit", $this->limit);
+        // Scoped per controller: the previous global "limit" key let a page
+        // size chosen on one list silently change every other list.
+        return $this->getSession()->get($this->name.'_limit', $this->limit);
     }
 
     protected function getPage(Request $request):int
@@ -87,19 +91,20 @@ abstract class BasePaginationController extends BaseController implements Pagina
             return 1;
         }
 
+        $session = $this->getSession();
         if (!$request->query->has("page")) {
-            $page = $this->get('session')->get($this->name);
+            $page = $session->get($this->name);
             if (null === $page) {
-                $this->get('session')->set($this->name, 1);
-                $page = $this->get('session')->get($this->name);
+                $session->set($this->name, 1);
+                $page = $session->get($this->name);
             }
 
             return $page;
         }
 
-        $this->get('session')->set($this->name, $request->query->getInt("page"));
+        $session->set($this->name, $request->query->getInt("page"));
 
-        return $this->get('session')->get($this->name);
+        return $session->get($this->name);
     }
 
     public function getPaginator(): PaginatorInterface

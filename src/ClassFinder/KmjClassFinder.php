@@ -15,7 +15,7 @@ class KmjClassFinder
      * @param string $intefaceClass
      * @return array
      */
-    public static function getClassesInNamespaceByInterface(string $namespace, string $intefaceClass = null):array
+    public static function getClassesInNamespaceByInterface(string $namespace, ?string $intefaceClass = null):array
     {
         $classes = ClassFinder::getClassesInNamespace($namespace);
         

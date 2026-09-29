@@ -46,7 +46,11 @@
             },
             success: function (e) {
                 if (false === e.status) {
-                    $("#message").html("<p>{{'error'|trans}}: " + e.errors + "</p>");
+                    // The server error message is untrusted input, so it is
+                    // inserted with .text() instead of being concatenated into
+                    // markup passed to .html().
+                    $("#message").html('<p>{{'error'|trans}}: <span class="error-text"></span></p>');
+                    $("#message").find(".error-text").text(e.errors);
                     $("#message").removeClass("hidden");
                     submitBtn.removeClass("disabled");
                     submitBtn.attr("type", "submit");
@@ -60,8 +64,15 @@
                         if (e.redirectURL.length >1) {
                             for (i = 0; i < e.redirectURL.length; i++) {
                                 let uri = e.redirectURL[i];
-                                let icon = (uri.icon) ? uri.icon : '<i class="fa fa-list"></i>';
-                                $("#additional_actions").append('<a href="'+uri.url+'" target="_blank" class="btn btn-primary">'+icon+' '+uri.title+'</a>');
+                                // Built through the DOM API instead of string
+                                // concatenation: the url goes through .attr()
+                                // and the title through a text node, so neither
+                                // can inject markup. The icon stays raw because
+                                // it is deliberately server-rendered HTML.
+                                let $link = $('<a target="_blank" class="btn btn-primary"></a>').attr('href', uri.url || '#');
+                                $link.append(uri.icon ? uri.icon : '<i class="fa fa-list"></i>');
+                                $link.append(document.createTextNode(' ' + (uri.title || '')));
+                                $("#additional_actions").append($link);
                             }
 
                             submitBtn.addClass("hidden");

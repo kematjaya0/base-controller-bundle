@@ -3,7 +3,10 @@
 namespace Kematjaya\BaseControllerBundle\Controller;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Form\FormInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,7 +16,7 @@ use Twig\Environment;
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
-abstract class BaseController extends AbstractController implements TwigControllerInterface, TranslatorControllerInterface
+abstract class BaseController extends AbstractController implements TwigControllerInterface, TranslatorControllerInterface, SessionControllerInterface, DoctrineManagerRegistryControllerInterface
 {
     /**
      *
@@ -26,6 +29,19 @@ abstract class BaseController extends AbstractController implements TwigControll
      * @var Environment
      */
     private $twig;
+    
+    /**
+     * Injected via the compiler pass: Symfony 5.0 removed getDoctrine() from
+     * AbstractController, so it is restored here for backwards compatibility.
+     *
+     * @var ManagerRegistry
+     */
+    private $managerRegistry;
+    
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
     
     public function setTranslator(TranslatorInterface $translator):void
     {
@@ -45,6 +61,38 @@ abstract class BaseController extends AbstractController implements TwigControll
     public function getTwig():Environment
     {
         return $this->twig;
+    }
+    
+    public function setManagerRegistry(ManagerRegistry $managerRegistry):void
+    {
+        $this->managerRegistry = $managerRegistry;
+    }
+    
+    public function getDoctrine():ManagerRegistry
+    {
+        return $this->managerRegistry;
+    }
+    
+    public function setRequestStack(RequestStack $requestStack):void
+    {
+        $this->requestStack = $requestStack;
+    }
+    
+    /**
+     * Resolves the session of the current request.
+     *
+     * Replaces the container lookup `$this->get('session')`, which relied on
+     * ControllerTrait::get() — removed in Symfony 5.0. RequestStack is used
+     * instead of the container `session` service, which no longer exists in
+     * recent FrameworkBundle releases and is not autowirable in any of them.
+     */
+    public function getSession():SessionInterface
+    {
+        if (null === $this->requestStack) {
+            throw new \LogicException('The request stack is not available. Make sure the controller is registered as a service and tagged by the BaseControllerBundle compiler pass.');
+        }
+        
+        return $this->requestStack->getSession();
     }
     
     /**
@@ -133,11 +181,30 @@ abstract class BaseController extends AbstractController implements TwigControll
     
     protected function saveObject($object, EntityManagerInterface $manager)
     {
-        $manager->transactional(function (EntityManagerInterface $em) use ($object) {
+        $this->transactional($manager, function (EntityManagerInterface $em) use ($object) {
             $em->persist($object);
         });
         
         return $object;
+    }
+    
+    /**
+     * Runs $func inside a transaction on both ORM 2 and ORM 3.
+     *
+     * ORM 3 removed EntityManagerInterface::transactional(), while ORM 2 only
+     * declares transactional() on the interface and keeps wrapInTransaction()
+     * on the concrete EntityManager. wrapInTransaction() is preferred because
+     * unlike transactional() it does not close the EntityManager when the
+     * callback throws; transactional() is the fallback for implementations
+     * that do not expose it.
+     */
+    protected function transactional(EntityManagerInterface $manager, callable $func)
+    {
+        if (method_exists($manager, 'wrapInTransaction')) {
+            return $manager->wrapInTransaction($func);
+        }
+        
+        return $manager->transactional($func);
     }
     
     protected function processForm(Request $request, FormInterface $form, $func = null)
@@ -203,7 +270,13 @@ abstract class BaseController extends AbstractController implements TwigControll
     
     protected function doDelete(Request $request, $object, string $tokenName):void
     {
-        if (!$this->isCsrfTokenValid($tokenName, $request->request->get('_token'))) {
+        // The token is read from the body first, then from the query string.
+        // Symfony's Request::create() puts parameters for DELETE in the body,
+        // so tests and AJAX calls keep working; a plain browser link cannot
+        // send a DELETE body at all, so those have to use the query string.
+        $token = $request->request->get('_token') ?? $request->query->get('_token');
+        
+        if (!$this->isCsrfTokenValid($tokenName, $token)) {
             $this->addFlash('error', $this->getTranslator()->trans('csrf_token_detected'));
             return;
         }
@@ -213,22 +286,19 @@ abstract class BaseController extends AbstractController implements TwigControll
             
             $this->removeObject($object, $manager);
             
-            $this->addFlash('info', $this->getTranslator()->trans('successfull_delete'));
+            $this->addFlash("info", $this->getTranslator()->trans('successfull_delete'));
         } catch (\Exception $ex) {
-            $this->addFlash('error', $this->getErrorMessage($ex));
+            $this->addFlash("error", $this->getErrorMessage($ex));
         }
     }
     
     protected function removeObject($object, EntityManagerInterface $manager):void
     {
-        $manager->transactional(function (EntityManagerInterface $em) use ($object) {
+        // The previous implementation also issued a raw DQL DELETE for the same
+        // row. That bypassed the identity map, cascade rules and lifecycle
+        // events, and could remove a row without cascading to its children.
+        $this->transactional($manager, function (EntityManagerInterface $em) use ($object) {
             $em->remove($object);
         });
-
-        if($object->getId()) {
-            $qb = $manager->createQueryBuilder('t')->delete(get_class($object), 'obj')->where('obj.id = :id')
-                ->setParameter('id', $object->getId());
-            $qb->getQuery()->execute();
-        }
     }
 }

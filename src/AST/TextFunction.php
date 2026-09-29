@@ -5,12 +5,14 @@ namespace Kematjaya\BaseControllerBundle\AST;
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\SqlWalker;
 use Doctrine\ORM\Query\Parser;
-use Doctrine\ORM\Query\Lexer;
+
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
 class TextFunction extends FunctionNode
 {
+    use TokenTypeResolverTrait;
+    
     /**
      * @var \Doctrine\ORM\Query\AST\Node
      */
@@ -25,9 +27,9 @@ class TextFunction extends FunctionNode
 
     public function parse(Parser $parser): void
     {
-        $parser->match(Lexer::T_IDENTIFIER);
-        $parser->match(Lexer::T_OPEN_PARENTHESIS);
+        $parser->match(self::dqlToken('T_IDENTIFIER'));
+        $parser->match(self::dqlToken('T_OPEN_PARENTHESIS'));
         $this->stringPrimary = $parser->StringPrimary();
-        $parser->match(Lexer::T_CLOSE_PARENTHESIS);
+        $parser->match(self::dqlToken('T_CLOSE_PARENTHESIS'));
     }
 }

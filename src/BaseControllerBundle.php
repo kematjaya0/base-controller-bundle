@@ -2,6 +2,8 @@
 
 namespace Kematjaya\BaseControllerBundle;
 
+use Kematjaya\BaseControllerBundle\Controller\DoctrineManagerRegistryControllerInterface;
+use Kematjaya\BaseControllerBundle\Controller\SessionControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\TwigControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\LexikFilterControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\PaginationControllerInterface;
@@ -15,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class BaseControllerBundle extends Bundle
 {
-    public function build(ContainerBuilder $container) 
+    public function build(ContainerBuilder $container): void
     {
         $container->registerForAutoconfiguration(TwigControllerInterface::class)
                 ->addTag("controller.twig_arguments");
@@ -28,6 +30,12 @@ class BaseControllerBundle extends Bundle
         
         $container->registerForAutoconfiguration(LexikFilterControllerInterface::class)
                 ->addTag(LexikFilterControllerInterface::TAGGING_NAME);
+        
+        $container->registerForAutoconfiguration(SessionControllerInterface::class)
+                ->addTag(SessionControllerInterface::SESSION_TAGGING_NAME);
+        
+        $container->registerForAutoconfiguration(DoctrineManagerRegistryControllerInterface::class)
+                ->addTag(DoctrineManagerRegistryControllerInterface::DOCTRINE_TAGGING_NAME);
         
         $container->addCompilerPass(new ControllerCompilerPass());
         

@@ -41,9 +41,9 @@ abstract class AbstractControllerTest extends WebTestCase
 
         $this->client = static::createClient();
 
-        $this->doctrine = static::$container->get('doctrine');
+        $this->doctrine = static::getContainer()->get('doctrine');
         
-        $this->router = static::$container->get('router');
+        $this->router = static::getContainer()->get('router');
     }
     
     protected function request(string $method, string $uri, array $parameters = [], array $files = [], array $server = [], string $content = null, bool $changeHistory = true)
