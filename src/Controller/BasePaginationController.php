@@ -59,7 +59,7 @@ abstract class BasePaginationController extends BaseController implements Pagina
      * @param Request $request
      * @return PaginationInterface
      */
-    protected function createArrayPaginator(array $data = [], Request $request): PaginationInterface
+    protected function createArrayPaginator(array $data, Request $request): PaginationInterface
     {
         return $this->getPaginator()->paginate(
             $data,
