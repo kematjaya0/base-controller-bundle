@@ -191,12 +191,16 @@ abstract class BaseController extends AbstractController implements TwigControll
     /**
      * Runs $func inside a transaction on both ORM 2 and ORM 3.
      *
-     * ORM 3 removed EntityManagerInterface::transactional(), while ORM 2 only
-     * declares transactional() on the interface and keeps wrapInTransaction()
-     * on the concrete EntityManager. wrapInTransaction() is preferred because
-     * unlike transactional() it does not close the EntityManager when the
-     * callback throws; transactional() is the fallback for implementations
-     * that do not expose it.
+     * ORM 3 removed EntityManager::transactional() entirely, while
+     * wrapInTransaction() exists in ORM 2.19+ and 3.x, so it is the only call
+     * available on every supported version and the transactional() branch is
+     * only reached by EntityManagerInterface implementations that predate it.
+     *
+     * Note that on failure wrapInTransaction() closes the EntityManager: both
+     * ORM 2.20 and ORM 3.7 roll back and then call close() from a finally block.
+     * The transaction is rolled back correctly, but the manager must not be
+     * reused afterwards. Callers that need to keep working after a failed save
+     * should obtain a fresh manager from the registry.
      */
     protected function transactional(EntityManagerInterface $manager, callable $func)
     {

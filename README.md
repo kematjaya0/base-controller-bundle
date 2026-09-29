@@ -250,6 +250,14 @@ from the injected `RequestStack`, and is declared on
 3.x. `removeObject()` no longer issues a second raw DQL `DELETE` for the same
 row — that bypassed the identity map, cascade rules and lifecycle callbacks.
 
+> **After a failed save the EntityManager is closed**
+> `wrapInTransaction()` rolls the transaction back **and closes** the manager on
+> failure (verified on ORM 2.20.13 and 3.7.2, both call `close()` from a
+> `finally` block). Nothing is written — the rollback is correct — but the
+> manager is unusable afterwards. If your code has to keep working after a
+> failed `saveObject()`/`removeObject()`, fetch a fresh manager from the
+> registry rather than reusing the one you passed in.
+
 ### 4.4 `TokenType` in custom AST filters
 
 `Doctrine\ORM\Query\Lexer::T_*` integer constants were removed in ORM 3. Use
