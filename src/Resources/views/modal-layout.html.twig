@@ -30,6 +30,30 @@
 <script src="{{asset('bundles/basecontroller/js/jquery.form.js')}}" type="text/javascript"></script>
 <script>
     $(document).ready(function () {
+        // Only http(s) and relative URLs are ever handed to the browser.
+        // .attr("href") prevents attribute-breakout injection, but it does NOT
+        // stop a "javascript:" or "data:" URL from executing when the link is
+        // clicked, nor window.location from running script directly.
+        function safeRedirectUrl(raw) {
+            if (typeof raw !== 'string') {
+                return null;
+            }
+            // Browsers ignore leading whitespace and strip tab/newline/CR
+            // while resolving a URL, so "java\tscript:" would otherwise pass a
+            // naive scheme test. Decide on a normalised copy, but hand back
+            // the original string so legitimate URLs are not mangled.
+            var probe = raw.replace(/[\u0000-\u0020]/g, '');
+            if (probe === '') {
+                return null;
+            }
+            // No scheme at all: relative path, query or fragment - safe.
+            if (!/^[a-zA-Z][a-zA-Z0-9+.\-]*:/.test(probe)) {
+                return raw;
+            }
+            // A scheme is present: allow only http and https.
+            return /^https?:\/\//i.test(probe) ? raw : null;
+        }
+
         var submitBtn = $("#ajaxForm").closest('form').find(':submit');
         $("#ajaxForm").ajaxForm({
             url: $(this).attr("action"), 
@@ -67,9 +91,18 @@
                                 // Built through the DOM API instead of string
                                 // concatenation: the url goes through .attr()
                                 // and the title through a text node, so neither
-                                // can inject markup. The icon stays raw because
-                                // it is deliberately server-rendered HTML.
-                                let $link = $('<a target="_blank" class="btn btn-primary"></a>').attr('href', uri.url || '#');
+                                // can inject markup. The url is additionally
+                                // scheme-checked, because .attr("href") alone
+                                // does not stop a "javascript:" URL from
+                                // running when the link is clicked.
+                                // uri.icon deliberately stays raw HTML: it is
+                                // server-rendered and must never interpolate
+                                // user-controlled values.
+                                let url = safeRedirectUrl(uri.url);
+                                if (url === null) {
+                                    continue;
+                                }
+                                let $link = $('<a target="_blank" class="btn btn-primary"></a>').attr('href', url);
                                 $link.append(uri.icon ? uri.icon : '<i class="fa fa-list"></i>');
                                 $link.append(document.createTextNode(' ' + (uri.title || '')));
                                 $("#additional_actions").append($link);
@@ -81,8 +114,10 @@
                             $("#btn-modal-close").attr("onclick", "return location.reload();");
                         } else {
                             for (i = 0; i < e.redirectURL.length; i++) {
-                                let uri = e.redirectURL[i];
-                                window.location = uri.url;
+                                let url = safeRedirectUrl(e.redirectURL[i].url);
+                                if (url !== null) {
+                                    window.location = url;
+                                }
                             }
                             
                         }
