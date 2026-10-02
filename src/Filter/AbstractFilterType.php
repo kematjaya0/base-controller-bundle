@@ -13,23 +13,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 abstract class AbstractFilterType extends AbstractType
 {
     use FilterFunctionTrait;
-    
-    /**
-     *
-     * @return string
-     */
-    public function getBlockPrefix()
+
+    public function getBlockPrefix(): string
     {
-        $class = explode('\\', strtolower(get_class($this)));
-        
+        $class = explode('\\', strtolower(static::class));
+
         return end($class);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'csrf_protection'   => true,
-            'validation_groups' => array('filtering')
-        ));
+            'validation_groups' => ['filtering'],
+        ]);
     }
 }

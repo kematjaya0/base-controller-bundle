@@ -50,7 +50,7 @@ final class AutoCompleteTypeTest extends FunctionalTestCase
      */
     public function testAQuoteInAnAttributeValueCannotBreakOutOfTheAttribute(): void
     {
-        $this->client->request('GET', '/probe/form?probe='.urlencode('" onmouseover="alert(1)'));
+        $this->client->request('GET', '/probe/form?probe=' . urlencode('" onmouseover="alert(1)'));
 
         self::assertResponseIsSuccessful();
         $attributes = $this->requestPayload()['html_attributes'];
@@ -61,7 +61,7 @@ final class AutoCompleteTypeTest extends FunctionalTestCase
 
     public function testMarkupInAnAttributeValueIsEscaped(): void
     {
-        $this->client->request('GET', '/probe/form?probe='.urlencode('<script>alert(1)</script>'));
+        $this->client->request('GET', '/probe/form?probe=' . urlencode('<script>alert(1)</script>'));
 
         self::assertResponseIsSuccessful();
         $attributes = $this->requestPayload()['html_attributes'];
@@ -72,7 +72,7 @@ final class AutoCompleteTypeTest extends FunctionalTestCase
 
     public function testAttributeNamesAreEscapedToo(): void
     {
-        $this->client->request('GET', '/probe/form?probe='.urlencode('plain-value'));
+        $this->client->request('GET', '/probe/form?probe=' . urlencode('plain-value'));
 
         self::assertResponseIsSuccessful();
         $attributes = $this->requestPayload()['html_attributes'];

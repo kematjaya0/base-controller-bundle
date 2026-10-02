@@ -10,10 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class TransactionalHarness extends BaseController
 {
-    /**
-     * @return mixed
-     */
-    public function callTransactional(EntityManagerInterface $manager, callable $func)
+    public function callTransactional(EntityManagerInterface $manager, callable $func): mixed
     {
         return $this->transactional($manager, $func);
     }
@@ -88,9 +85,7 @@ final class TransactionalBridgeTest extends TestCase
 
         $result = (new TransactionalHarness())->callTransactional(
             $manager,
-            static function () use ($expected) {
-                return $expected;
-            }
+            static fn(): \stdClass => $expected
         );
 
         $this->assertTrue($ran, 'the wrapped callback was never invoked');
@@ -104,13 +99,13 @@ final class TransactionalBridgeTest extends TestCase
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())
             ->method($this->expectedMethod())
-            ->willReturnCallback(static fn (callable $func) => $func($manager));
+            ->willReturnCallback(static fn(callable $func) => $func($manager));
 
         // The real closures in BaseController typehint EntityManagerInterface,
         // so the wrapper has to hand the manager back to them.
         (new TransactionalHarness())->callTransactional(
             $manager,
-            static function (EntityManagerInterface $em) use (&$seen) {
+            static function (EntityManagerInterface $em) use (&$seen): void {
                 $seen = $em;
             }
         );

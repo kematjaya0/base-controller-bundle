@@ -2,6 +2,7 @@
 
 namespace Kematjaya\BaseControllerBundle\Tests\Fixtures;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Kematjaya\BaseControllerBundle\BaseControllerBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -10,7 +11,6 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 
 /**
  * A real Symfony 6.4 kernel: FrameworkBundle for the HTTP/form/session stack,
@@ -41,7 +41,7 @@ final class TestKernel extends Kernel
      */
     public static function databaseFile(): string
     {
-        return sys_get_temp_dir().'/bcb-kernel-'.md5(__DIR__).'/functional.sqlite';
+        return sys_get_temp_dir() . '/bcb-kernel-' . md5(__DIR__) . '/functional.sqlite';
     }
 
     public function getProjectDir(): string
@@ -55,12 +55,12 @@ final class TestKernel extends Kernel
         // test in a run reuses the same cache instead of recompiling. The
         // directory is keyed by project path, so the ORM 2 and ORM 3 matrices
         // never share a container.
-        return sys_get_temp_dir().'/bcb-kernel-'.md5(__DIR__).'/cache';
+        return sys_get_temp_dir() . '/bcb-kernel-' . md5(__DIR__) . '/cache';
     }
 
     public function getLogDir(): string
     {
-        return sys_get_temp_dir().'/bcb-kernel-'.md5(__DIR__).'/log';
+        return sys_get_temp_dir() . '/bcb-kernel-' . md5(__DIR__) . '/log';
     }
 
     protected function configureContainer(ContainerBuilder $container): void
@@ -83,7 +83,7 @@ final class TestKernel extends Kernel
         ]);
 
         $container->loadFromExtension('twig', [
-            'default_path' => __DIR__.'/views',
+            'default_path' => __DIR__ . '/views',
             'strict_variables' => true,
         ]);
 
@@ -103,7 +103,7 @@ final class TestKernel extends Kernel
                     'BcBTest' => [
                         'is_bundle' => false,
                         'type' => 'attribute',
-                        'dir' => __DIR__.'/Entity',
+                        'dir' => __DIR__ . '/Entity',
                         'prefix' => 'Kematjaya\BaseControllerBundle\Tests\Fixtures\Entity',
                         'alias' => 'BcBTest',
                     ],

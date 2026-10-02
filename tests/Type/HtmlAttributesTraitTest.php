@@ -76,9 +76,9 @@ final class HtmlAttributesTraitTest extends TestCase
         $this->assertSame(
             2,
             substr_count($out, '"'),
-            'unescaped double quote leaked into: '.$out
+            'unescaped double quote leaked into: ' . $out
         );
-        $this->assertSame('id="'.htmlspecialchars($payload, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8').'"', $out);
+        $this->assertSame('id="' . htmlspecialchars($payload, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"', $out);
     }
 
     /**

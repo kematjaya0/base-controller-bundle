@@ -14,7 +14,7 @@ use Spiriit\Bundle\FormFilterBundle\Filter\Query\QueryInterface;
  * @license https://opensource.org/licenses/MIT MIT
  * @author  Nur Hidayatullah <kematjaya0@gmail.com>
  */
-trait FilterFunctionTrait 
+trait FilterFunctionTrait
 {
     /**
      * Resolves the Doctrine expression builder from the filter query.
@@ -22,36 +22,34 @@ trait FilterFunctionTrait
      * Spiriit 10/11 expose getExpr() on QueryInterface, while Spiriit 12 moved
      * it to the ORM implementation only. Both are handled here so the same
      * closures work across every supported release.
-     *
-     * @return Expr
      */
-    protected function getFilterExpr(QueryInterface $filterQuery):Expr
+    protected function getFilterExpr(QueryInterface $filterQuery): Expr
     {
         if (method_exists($filterQuery, 'getExpr')) {
             return $filterQuery->getExpr();
         }
-        
+
         return $filterQuery->getQueryBuilder()->expr();
     }
-    
-    protected function JSONQuery()
+
+    protected function JSONQuery(): \Closure
     {
-        return function(QueryInterface $filterQuery, $field, $values) {
+        return function (QueryInterface $filterQuery, string $field, array $values): mixed {
             if (empty($values['value'])) {
-                
+
                 return null;
             }
 
             $expr = $this->getFilterExpr($filterQuery);
-            $expression = $expr->like('TEXT('.$field.')', $expr->literal("%" . $values['value'] . "%"));
-            
+            $expression = $expr->like('TEXT(' . $field . ')', $expr->literal("%" . $values['value'] . "%"));
+
             return $filterQuery->createCondition($expression);
         };
     }
-    
-    protected function floatRangeQuery()
+
+    protected function floatRangeQuery(): \Closure
     {
-        return function(QueryInterface $filterQuery, $field, $values) {
+        return function (QueryInterface $filterQuery, string $field, array $values): mixed {
             if (!$values['value']) {
                 return null;
             }
@@ -81,27 +79,27 @@ trait FilterFunctionTrait
                 }
 
             }
-            
+
             if (!empty($condition)) {
                 $condition = implode(" AND ", $condition);
-                
+
                 return $filterQuery->createCondition($condition);
             }
-            
+
             return null;
         };
     }
-    
-    protected function dateRangeQuery() 
+
+    protected function dateRangeQuery(): \Closure
     {
-        return function (QueryInterface $filterQuery, $field, $values) {
+        return function (QueryInterface $filterQuery, string $field, array $values): mixed {
             if (!$values['value']) {
-                
+
                 return null;
             }
 
             if (is_null($values['value']['from']) && is_null($values['value']['to'])) {
-                
+
                 return null;
             }
 
@@ -122,9 +120,9 @@ trait FilterFunctionTrait
             if (empty($condition)) {
                 return null;
             }
-            
+
             $condition = implode(" AND ", $condition);
-            
+
             return $filterQuery->createCondition($condition);
         };
     }

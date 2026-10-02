@@ -16,25 +16,25 @@ trait HtmlAttributesTrait
     /**
      * @param array<string, mixed> $attr
      */
-    protected function buildHtmlAttributes(array $attr):string
+    protected function buildHtmlAttributes(array $attr): string
     {
         $parts = [];
         foreach ($attr as $key => $value) {
             if (null === $value || false === $value) {
                 continue;
             }
-            
+
             $parts[] = sprintf(
                 '%s="%s"',
                 $this->escapeAttribute((string) $key),
                 $this->escapeAttribute(is_scalar($value) ? (string) $value : '')
             );
         }
-        
+
         return implode(' ', $parts);
     }
-    
-    protected function escapeAttribute(string $value):string
+
+    protected function escapeAttribute(string $value): string
     {
         return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }

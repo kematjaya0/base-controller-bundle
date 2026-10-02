@@ -18,18 +18,18 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class ProbeController extends BaseController
 {
-    public function session(): Response
+    public function session(): JsonResponse
     {
         $session = $this->getSession();
         $session->set('probe', 'value');
 
         return new JsonResponse([
-            'sessionClass' => get_class($session),
+            'sessionClass' => $session::class,
             'probe' => $session->get('probe'),
         ]);
     }
 
-    public function save(Request $request): Response
+    public function save(Request $request): JsonResponse
     {
         $manager = $this->getDoctrine()->getManager();
 
@@ -51,7 +51,7 @@ final class ProbeController extends BaseController
      * back, which is what distinguishes the ORM 2 / ORM 3 bridge from a bare
      * persist() call.
      */
-    public function rollback(): Response
+    public function rollback(): JsonResponse
     {
         $manager = $this->getDoctrine()->getManager();
         $entity = new SampleEntity();
@@ -60,13 +60,13 @@ final class ProbeController extends BaseController
         $rolledBack = false;
 
         try {
-            $this->transactional($manager, function (EntityManagerInterface $em) use ($entity): void {
+            $this->transactional($manager, function (EntityManagerInterface $em) use ($entity): never {
                 $em->persist($entity);
                 $em->flush();
 
                 throw new \RuntimeException('rollback please');
             });
-        } catch (\RuntimeException $exception) {
+        } catch (\RuntimeException) {
             $rolledBack = true;
         }
 
@@ -80,7 +80,7 @@ final class ProbeController extends BaseController
         ]);
     }
 
-    public function count(): Response
+    public function count(): JsonResponse
     {
         $count = (int) $this->getDoctrine()
             ->getManager()
@@ -90,14 +90,14 @@ final class ProbeController extends BaseController
         return new JsonResponse(['count' => $count]);
     }
 
-    public function csrf(string $id): Response
+    public function csrf(string $id): JsonResponse
     {
         $token = $this->container->get('security.csrf.token_manager')->getToken($id);
 
         return new JsonResponse(['token' => $token->getValue()]);
     }
 
-    public function delete(Request $request, int $id): Response
+    public function delete(Request $request, int $id): JsonResponse
     {
         $manager = $this->getDoctrine()->getManager();
         $entity = $manager->find(SampleEntity::class, $id);
@@ -106,7 +106,7 @@ final class ProbeController extends BaseController
             throw new NotFoundHttpException('no such entity');
         }
 
-        $this->doDelete($request, $entity, 'delete'.$id);
+        $this->doDelete($request, $entity, 'delete' . $id);
         $manager->flush();
 
         $remaining = $manager->getConnection()->fetchOne('SELECT COUNT(*) FROM sample_entity');
@@ -120,7 +120,7 @@ final class ProbeController extends BaseController
         return new Response($this->renderView('probe.html.twig', ['label' => 'rendered']));
     }
 
-    public function form(Request $request): Response
+    public function form(Request $request): JsonResponse
     {
         // The probe attribute is caller supplied so the test can prove the
         // generated attribute string is escaped, not interpolated raw.

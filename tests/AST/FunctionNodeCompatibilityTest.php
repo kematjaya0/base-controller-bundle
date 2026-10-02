@@ -43,13 +43,10 @@ final class FunctionNodeCompatibilityTest extends TestCase
 
     /**
      * dqlToken() is private on the trait; reach it the same way the AST does.
-     *
-     * @return mixed
      */
-    private function resolveToken(object $node, string $name)
+    private function resolveToken(object $node, string $name): mixed
     {
         $method = new \ReflectionMethod($node, 'dqlToken');
-        $method->setAccessible(true);
 
         return $method->invoke(null, $name);
     }
@@ -87,8 +84,8 @@ final class FunctionNodeCompatibilityTest extends TestCase
     {
         $type = (new \ReflectionMethod($class, 'getSql'))->getReturnType();
 
-        $this->assertNotNull($type, $class.'::getSql() must declare a return type');
-        $this->assertSame('string', $type->getName(), $class.'::getSql() must return string');
+        $this->assertNotNull($type, $class . '::getSql() must declare a return type');
+        $this->assertSame('string', $type->getName(), $class . '::getSql() must return string');
     }
 
     /**
@@ -100,8 +97,8 @@ final class FunctionNodeCompatibilityTest extends TestCase
     {
         $type = (new \ReflectionMethod($class, 'parse'))->getReturnType();
 
-        $this->assertNotNull($type, $class.'::parse() must declare a return type');
-        $this->assertSame('void', $type->getName(), $class.'::parse() must return void');
+        $this->assertNotNull($type, $class . '::parse() must declare a return type');
+        $this->assertSame('void', $type->getName(), $class . '::parse() must return void');
     }
 
     /**
@@ -141,7 +138,7 @@ final class FunctionNodeCompatibilityTest extends TestCase
                     sprintf('dqlToken(%s) must return an int on this ORM', $name)
                 );
                 $this->assertSame(
-                    constant(Lexer::class.'::'.$name),
+                    Lexer::{$name},
                     $token,
                     sprintf('dqlToken(%s) does not match Lexer::%s', $name, $name)
                 );

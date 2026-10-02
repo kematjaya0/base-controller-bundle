@@ -3,8 +3,9 @@
 namespace Kematjaya\BaseControllerBundle\AST;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\SqlWalker;
+use Doctrine\ORM\Query\AST\Node;
 use Doctrine\ORM\Query\Parser;
+use Doctrine\ORM\Query\SqlWalker;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
@@ -12,17 +13,14 @@ use Doctrine\ORM\Query\Parser;
 class TextFunction extends FunctionNode
 {
     use TokenTypeResolverTrait;
-    
-    /**
-     * @var \Doctrine\ORM\Query\AST\Node
-     */
-    public $stringPrimary;
-    
+
+    public Node|string|null $stringPrimary = null;
+
     public function getSql(SqlWalker $sqlWalker): string
     {
         $stringPrimary  = $sqlWalker->walkStringPrimary($this->stringPrimary);
         //$platform       = $sqlWalker->getConnection()->getDatabasePlatform();
-        return 'TEXT('.$stringPrimary.')';
+        return 'TEXT(' . $stringPrimary . ')';
     }
 
     public function parse(Parser $parser): void

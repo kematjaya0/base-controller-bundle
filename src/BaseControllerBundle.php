@@ -2,15 +2,15 @@
 
 namespace Kematjaya\BaseControllerBundle;
 
+use Kematjaya\BaseControllerBundle\CompilerPass\ControllerCompilerPass;
 use Kematjaya\BaseControllerBundle\Controller\DoctrineManagerRegistryControllerInterface;
-use Kematjaya\BaseControllerBundle\Controller\SessionControllerInterface;
-use Kematjaya\BaseControllerBundle\Controller\TwigControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\LexikFilterControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\PaginationControllerInterface;
+use Kematjaya\BaseControllerBundle\Controller\SessionControllerInterface;
 use Kematjaya\BaseControllerBundle\Controller\TranslatorControllerInterface;
-use Kematjaya\BaseControllerBundle\CompilerPass\ControllerCompilerPass;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Kematjaya\BaseControllerBundle\Controller\TwigControllerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
@@ -21,24 +21,24 @@ class BaseControllerBundle extends Bundle
     {
         $container->registerForAutoconfiguration(TwigControllerInterface::class)
                 ->addTag("controller.twig_arguments");
-        
+
         $container->registerForAutoconfiguration(TranslatorControllerInterface::class)
                 ->addTag(TranslatorControllerInterface::CONTROLLER_TAG_NAME);
-        
+
         $container->registerForAutoconfiguration(PaginationControllerInterface::class)
                 ->addTag(PaginationControllerInterface::CONST_TAG_NAME);
-        
+
         $container->registerForAutoconfiguration(LexikFilterControllerInterface::class)
                 ->addTag(LexikFilterControllerInterface::TAGGING_NAME);
-        
+
         $container->registerForAutoconfiguration(SessionControllerInterface::class)
                 ->addTag(SessionControllerInterface::SESSION_TAGGING_NAME);
-        
+
         $container->registerForAutoconfiguration(DoctrineManagerRegistryControllerInterface::class)
                 ->addTag(DoctrineManagerRegistryControllerInterface::DOCTRINE_TAGGING_NAME);
-        
+
         $container->addCompilerPass(new ControllerCompilerPass());
-        
+
         parent::build($container);
     }
 }

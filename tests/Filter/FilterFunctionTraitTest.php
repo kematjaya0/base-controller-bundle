@@ -17,16 +17,9 @@ use Spiriit\Bundle\FormFilterBundle\Filter\Query\QueryInterface;
  */
 class FakeQueryBuilder
 {
-    /** @var int */
-    public $exprCalls = 0;
+    public int $exprCalls = 0;
 
-    /** @var Expr */
-    private $expr;
-
-    public function __construct(Expr $expr)
-    {
-        $this->expr = $expr;
-    }
+    public function __construct(private readonly Expr $expr) {}
 
     public function expr(): Expr
     {
@@ -44,36 +37,27 @@ class FakeQueryBuilder
  */
 class RecordingFilterQuery implements QueryInterface
 {
-    /** @var int */
-    public $queryBuilderCalls = 0;
+    public int $queryBuilderCalls = 0;
 
-    /** @var string|null */
-    public $condition;
+    public mixed $condition = null;
 
-    /** @var array */
-    public $conditionParameters = [];
+    public array $conditionParameters = [];
 
-    /** @var FakeQueryBuilder|null */
-    private $queryBuilder;
+    public function __construct(private readonly ?FakeQueryBuilder $queryBuilder = null) {}
 
-    public function __construct(?FakeQueryBuilder $queryBuilder = null)
-    {
-        $this->queryBuilder = $queryBuilder;
-    }
-
-    public function getQueryBuilder()
+    public function getQueryBuilder(): ?FakeQueryBuilder
     {
         ++$this->queryBuilderCalls;
 
         return $this->queryBuilder;
     }
 
-    public function getEventPartName()
+    public function getEventPartName(): string
     {
         return 'filter';
     }
 
-    public function createCondition($expression, array $parameters = [])
+    public function createCondition(mixed $expression, array $parameters = []): mixed
     {
         $this->condition = $expression;
         $this->conditionParameters = $parameters;
@@ -81,12 +65,12 @@ class RecordingFilterQuery implements QueryInterface
         return $expression;
     }
 
-    public function getRootAlias()
+    public function getRootAlias(): string
     {
         return 'o';
     }
 
-    public function hasJoinAlias($joinAlias)
+    public function hasJoinAlias(mixed $joinAlias): bool
     {
         return false;
     }
@@ -97,17 +81,12 @@ class RecordingFilterQuery implements QueryInterface
  */
 class LegacyFilterQuery extends RecordingFilterQuery
 {
-    /** @var Expr */
-    private $expr;
-
-    public function __construct(Expr $expr, ?FakeQueryBuilder $queryBuilder = null)
+    public function __construct(private readonly Expr $expr, ?FakeQueryBuilder $queryBuilder = null)
     {
         parent::__construct($queryBuilder);
-
-        $this->expr = $expr;
     }
 
-    public function getExpr()
+    public function getExpr(): Expr
     {
         return $this->expr;
     }
@@ -192,7 +171,7 @@ final class FilterFunctionTraitTest extends TestCase
         $result = (new FilterHarness())->{$helper}()($query, 't.foo', $values);
 
         $this->assertNull($result);
-        $this->assertNull($query->condition, $helper.' created a condition for an empty value');
+        $this->assertNull($query->condition, $helper . ' created a condition for an empty value');
     }
 
     /**

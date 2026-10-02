@@ -2,6 +2,7 @@
 
 namespace Kematjaya\BaseControllerBundle\Tests\Functional;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Kematjaya\BaseControllerBundle\Tests\Fixtures\Entity\SampleEntity;
 use Kematjaya\BaseControllerBundle\Tests\Fixtures\TestKernel;
@@ -74,7 +75,7 @@ abstract class FunctionalTestCase extends WebTestCase
      */
     protected function csrfToken(string $id): string
     {
-        $this->client->request('GET', '/probe/csrf/'.$id);
+        $this->client->request('GET', '/probe/csrf/' . $id);
 
         $payload = json_decode((string) $this->client->getResponse()->getContent(), true);
 
@@ -93,7 +94,7 @@ abstract class FunctionalTestCase extends WebTestCase
         return (int) $this->requestPayload()['count'];
     }
 
-    protected function entityManager(): \Doctrine\ORM\EntityManagerInterface
+    protected function entityManager(): EntityManagerInterface
     {
         return static::getContainer()->get('doctrine')->getManager();
     }

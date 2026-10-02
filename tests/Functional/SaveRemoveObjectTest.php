@@ -86,9 +86,9 @@ final class SaveRemoveObjectTest extends FunctionalTestCase
     public function testRemoveObjectDeletesThroughTheIdentityMap(): void
     {
         $id = $this->seedEntity('doomed');
-        $token = $this->csrfToken('delete'.$id);
+        $token = $this->csrfToken('delete' . $id);
 
-        $this->client->request('DELETE', '/probe/delete/'.$id, ['_token' => $token]);
+        $this->client->request('DELETE', '/probe/delete/' . $id, ['_token' => $token]);
 
         self::assertResponseIsSuccessful();
         self::assertSame(0, $this->requestPayload()['remaining']);

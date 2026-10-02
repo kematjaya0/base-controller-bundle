@@ -49,7 +49,6 @@ final class ControllerCompilerPassTest extends TestCase
     private function autoconfiguredTags(ContainerBuilder $container): array
     {
         $property = new \ReflectionProperty(ContainerBuilder::class, 'autoconfiguredInstanceof');
-        $property->setAccessible(true);
 
         $map = [];
         foreach ($property->getValue($container) as $interface => $childDefinition) {
@@ -75,9 +74,9 @@ final class ControllerCompilerPassTest extends TestCase
         $this->assertArrayHasKey(
             $interface,
             $tags,
-            $interface.' is not registered for autoconfiguration'
+            $interface . ' is not registered for autoconfiguration'
         );
-        $this->assertCount(1, $tags[$interface], $interface.' must declare exactly one tag');
+        $this->assertCount(1, $tags[$interface], $interface . ' must declare exactly one tag');
 
         $definition = new Definition(\stdClass::class);
         $definition->addTag($tags[$interface][0]);
@@ -116,7 +115,7 @@ final class ControllerCompilerPassTest extends TestCase
         (new BaseControllerBundle())->build($container);
 
         $passes = $container->getCompilerPassConfig()->getBeforeOptimizationPasses();
-        $classes = array_map(static fn (object $pass) => get_class($pass), $passes);
+        $classes = array_map(get_class(...), $passes);
 
         $this->assertContains(ControllerCompilerPass::class, $classes);
     }
@@ -134,7 +133,7 @@ final class ControllerCompilerPassTest extends TestCase
         $known = array_column($this->interfaceProvider(), 0);
 
         foreach (array_keys($this->autoconfiguredTags($container)) as $interface) {
-            $this->assertContains($interface, $known, $interface.' has no test coverage');
+            $this->assertContains($interface, $known, $interface . ' has no test coverage');
         }
         $this->assertCount(count($known), $this->autoconfiguredTags($container));
     }

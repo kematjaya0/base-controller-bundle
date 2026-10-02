@@ -30,7 +30,7 @@
         "doctrine/doctrine-bundle": "^2.7"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.3",
         "doctrine/orm": "^2.19|^3.2",
         "doctrine/persistence": "^3.3",
         "symfony/http-kernel": "^6.4",

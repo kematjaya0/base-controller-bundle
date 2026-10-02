@@ -3,17 +3,18 @@
 namespace Kematjaya\BaseControllerBundle\AST;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\SqlWalker;
+use Doctrine\ORM\Query\AST\Node;
 use Doctrine\ORM\Query\Parser;
+use Doctrine\ORM\Query\SqlWalker;
 
 /**
  * @author Nur Hidayatullah <kematjaya0@gmail.com>
  */
-class DateFunction extends FunctionNode 
+class DateFunction extends FunctionNode
 {
     use TokenTypeResolverTrait;
-    
-    public $date;
+
+    public Node|string|null $date = null;
 
     // ORM 3 declares FunctionNode::getSql(): string and ::parse(): void.
     // ORM 2 declares both untyped; adding return types here is legal against
@@ -22,7 +23,7 @@ class DateFunction extends FunctionNode
     {
         return "DATE(" . $sqlWalker->walkArithmeticPrimary($this->date) . ")";
     }
-    
+
     public function parse(Parser $parser): void
     {
         $parser->match(self::dqlToken('T_IDENTIFIER'));

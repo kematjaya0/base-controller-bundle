@@ -24,10 +24,7 @@ trait TokenTypeResolverTrait
      */
     private static array $resolvedTokens = [];
 
-    /**
-     * @return int|\BackedEnum
-     */
-    private static function dqlToken(string $name)
+    private static function dqlToken(string $name): int|\BackedEnum
     {
         if (isset(self::$resolvedTokens[$name])) {
             return self::$resolvedTokens[$name];
@@ -35,10 +32,10 @@ trait TokenTypeResolverTrait
 
         // ORM 3.x (TokenType exists and is a backed enum).
         if (enum_exists(TokenType::class)) {
-            return self::$resolvedTokens[$name] = constant(TokenType::class.'::'.$name);
+            return self::$resolvedTokens[$name] = TokenType::{$name};
         }
 
         // ORM 2.x (integer constants on the Lexer).
-        return self::$resolvedTokens[$name] = constant(Lexer::class.'::'.$name);
+        return self::$resolvedTokens[$name] = Lexer::{$name};
     }
 }

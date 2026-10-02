@@ -4,13 +4,12 @@ namespace Kematjaya\BaseControllerBundle\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DateRangeType extends AbstractType
 {
-    
-    public function buildForm(FormBuilderInterface $builder, array $options) 
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $fromOpt = $options['from_options'];
         $fromOpt['required'] = false;
@@ -19,13 +18,14 @@ class DateRangeType extends AbstractType
         $builder->add('from', DateType::class, $fromOpt)
                 ->add('to', DateType::class, $toOpt);
     }
-    
-    public function configureOptions(OptionsResolver $resolver) {
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
         $resolver->setDefaults([
             'widget' => 'single_text',
             'from_options' => [],
-            'to_options' => []
+            'to_options' => [],
         ]);
     }
-    
+
 }

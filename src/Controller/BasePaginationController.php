@@ -14,35 +14,20 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class BasePaginationController extends BaseController implements PaginationControllerInterface
 {
-    /**
-     *
-     * @var PaginatorInterface
-     */
-    protected $paginator;
+    protected PaginatorInterface $paginator;
 
-    /**
-     *
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     *
-     * @var int
-     */
-    protected $limit = 20;
+    protected int $limit = 20;
 
-    public function setPaginator(PaginatorInterface $paginator):void
+    public function setPaginator(PaginatorInterface $paginator): void
     {
-        $this->name = "pagination_".strtolower(str_replace("\\", "_", get_class($this)));
+        $this->name = "pagination_" . strtolower(str_replace("\\", "_", static::class));
         $this->paginator = $paginator;
     }
 
     /**
      * create Paginator object
-     * @param QueryBuilder $queryBuilder
-     * @param Request $request
-     * @return PaginationInterface
      */
     protected function createPaginator(QueryBuilder $queryBuilder, Request $request): PaginationInterface
     {
@@ -53,12 +38,6 @@ abstract class BasePaginationController extends BaseController implements Pagina
         );
     }
 
-    /**
-     *
-     * @param array $data
-     * @param Request $request
-     * @return PaginationInterface
-     */
     protected function createArrayPaginator(array $data, Request $request): PaginationInterface
     {
         return $this->getPaginator()->paginate(
@@ -68,24 +47,19 @@ abstract class BasePaginationController extends BaseController implements Pagina
         );
     }
 
-    /**
-     *
-     * @param Request $request
-     * @return int
-     */
-    protected function processLimit(Request $request):int
+    protected function processLimit(Request $request): int
     {
         $limit = is_numeric($request->get('_limit')) ? (int) $request->get('_limit') : null;
         if (null !== $limit) {
-            $this->getSession()->set($this->name.'_limit', $limit);
+            $this->getSession()->set($this->name . '_limit', $limit);
         }
 
         // Scoped per controller: the previous global "limit" key let a page
         // size chosen on one list silently change every other list.
-        return $this->getSession()->get($this->name.'_limit', $this->limit);
+        return $this->getSession()->get($this->name . '_limit', $this->limit);
     }
 
-    protected function getPage(Request $request):int
+    protected function getPage(Request $request): int
     {
         if (Request::METHOD_POST === $request->getMethod()) {
             return 1;
@@ -111,5 +85,4 @@ abstract class BasePaginationController extends BaseController implements Pagina
     {
         return $this->paginator;
     }
-
 }
